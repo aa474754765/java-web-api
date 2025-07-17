@@ -1,0 +1,16 @@
+com\kazibu\web_api\service\UserDetailsServiceImpl.class
+com\kazibu\web_api\WebApiApplication.class
+com\kazibu\web_api\entity\UserRole.class
+com\kazibu\web_api\repository\MenuRepository.class
+com\kazibu\web_api\entity\Menu.class
+com\kazibu\web_api\entity\User.class
+com\kazibu\web_api\HelloController.class
+com\kazibu\web_api\controller\AuthController.class
+com\kazibu\web_api\entity\RoleMenu.class
+com\kazibu\web_api\repository\RoleRepository.class
+com\kazibu\web_api\config\SecurityConfig.class
+com\kazibu\web_api\repository\UserRepository.class
+com\kazibu\web_api\security\JwtUtil.class
+com\kazibu\web_api\repository\RoleMenuRepository.class
+com\kazibu\web_api\repository\UserRoleRepository.class
+com\kazibu\web_api\entity\Role.class
