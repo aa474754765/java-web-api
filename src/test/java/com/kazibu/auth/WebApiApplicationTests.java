@@ -1,4 +1,4 @@
-package com.kazibu.web_api;
+package com.kazibu.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

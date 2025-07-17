@@ -1,4 +1,4 @@
-package com.kazibu.web_api.config;
+package com.kazibu.auth.config;
 
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -1,4 +1,4 @@
-package com.kazibu.web_api;
+package com.kazibu.auth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

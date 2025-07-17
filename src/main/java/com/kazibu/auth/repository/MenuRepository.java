@@ -1,7 +1,8 @@
-package com.kazibu.web_api.repository;
+package com.kazibu.auth.repository;
 
-import com.kazibu.web_api.entity.Menu;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.kazibu.auth.entity.Menu;
 
 public interface MenuRepository extends JpaRepository<Menu, Long> {
 }

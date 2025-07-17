@@ -1,7 +1,8 @@
-package com.kazibu.web_api.repository;
+package com.kazibu.auth.repository;
 
-import com.kazibu.web_api.entity.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.kazibu.auth.entity.UserRole;
 
 public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
 }

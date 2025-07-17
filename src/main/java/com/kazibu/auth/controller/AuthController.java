@@ -1,6 +1,5 @@
-package com.kazibu.web_api.controller;
+package com.kazibu.auth.controller;
 
-import com.kazibu.web_api.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
@@ -8,13 +7,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import com.kazibu.auth.security.JwtUtil;
+
 @RestController
 public class AuthController {
 
   @Autowired
   private AuthenticationManager authenticationManager;
   @Autowired
-  private com.kazibu.web_api.service.UserDetailsServiceImpl userDetailsService;
+  private com.kazibu.auth.service.UserDetailsServiceImpl userDetailsService;
   @Autowired
   private JwtUtil jwtUtil;
   @Autowired

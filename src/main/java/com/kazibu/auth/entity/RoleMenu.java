@@ -1,19 +1,19 @@
-package com.kazibu.web_api.entity;
+package com.kazibu.auth.entity;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "user_role")
-public class UserRole {
+@Table(name = "role_menu")
+public class RoleMenu {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "user_id", nullable = false)
-  private Long userId;
-
   @Column(name = "role_id", nullable = false)
   private Long roleId;
+
+  @Column(name = "menu_id", nullable = false)
+  private Long menuId;
 
   public Long getId() {
     return id;
@@ -23,19 +23,19 @@ public class UserRole {
     this.id = id;
   }
 
-  public Long getUserId() {
-    return userId;
-  }
-
-  public void setUserId(Long userId) {
-    this.userId = userId;
-  }
-
   public Long getRoleId() {
     return roleId;
   }
 
   public void setRoleId(Long roleId) {
     this.roleId = roleId;
+  }
+
+  public Long getMenuId() {
+    return menuId;
+  }
+
+  public void setMenuId(Long menuId) {
+    this.menuId = menuId;
   }
 }

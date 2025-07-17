@@ -1,4 +1,4 @@
-package com.kazibu.web_api.entity;
+package com.kazibu.auth.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

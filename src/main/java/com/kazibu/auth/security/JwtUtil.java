@@ -1,4 +1,4 @@
-package com.kazibu.web_api.security;
+package com.kazibu.auth.security;
 
 import io.jsonwebtoken.*;
 import org.springframework.security.core.userdetails.UserDetails;

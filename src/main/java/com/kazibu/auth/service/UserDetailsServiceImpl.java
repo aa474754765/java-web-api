@@ -1,10 +1,11 @@
-package com.kazibu.web_api.service;
+package com.kazibu.auth.service;
 
-import com.kazibu.web_api.entity.User;
-import com.kazibu.web_api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
+
+import com.kazibu.auth.entity.User;
+import com.kazibu.auth.repository.UserRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
