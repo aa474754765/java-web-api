@@ -9,13 +9,18 @@ import org.springframework.security.config.annotation.web.configuration.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.kazibu.auth.security.JwtAuthenticationFilter;
+import com.kazibu.auth.security.PermissionFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+  @Autowired
+  private PermissionFilter permissionFilter;
 
   @Autowired
   private JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -38,6 +43,7 @@ public class SecurityConfig {
 
     // 加入jwtAuthenticationFilter
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    http.addFilterAfter(permissionFilter, AuthorizationFilter.class);
 
     return http.build();
   }

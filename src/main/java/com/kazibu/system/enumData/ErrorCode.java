@@ -4,7 +4,9 @@ public enum ErrorCode {
     SUCCESS("0", "success"),
     USERNAME_OR_PASSWORD_ERROR("1001", "用户名或密码错误"),
     LOGIN_FAILED("1002", "登录失败，请稍后重试"),
-    USERNAME_EXISTS("1003", "用户名已存在");
+    USERNAME_EXISTS("1003", "用户名已存在"),
+    NO_PERMISSION("1004", "无权限访问该接口"),
+    SYSTEM_ERROR("9999", "系统错误");
 
     private final String code;
     private final String msg;
