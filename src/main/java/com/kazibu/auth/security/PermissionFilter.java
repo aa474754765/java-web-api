@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 @Component
 public class PermissionFilter extends OncePerRequestFilter {
@@ -91,14 +93,20 @@ public class PermissionFilter extends OncePerRequestFilter {
       if (allowedPaths == null) {
         // 获取用户所有角色
         List<UserRole> userRoles = userRoleRepository.findAllByUserId(user.getId());
-        List<Long> roleIds = userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toList());
+        List<Long> roleIds = new ArrayList<>();
+        for (UserRole userRole : userRoles) {
+            roleIds.add(userRole.getRole().getId());
+        }
 
         // 获取角色对应的所有菜单
         List<RoleMenu> roleMenus = roleMenuRepository.findAllByRoleIdIn(roleIds);
-        Set<Long> menuIds = roleMenus.stream().map(RoleMenu::getMenuId).collect(Collectors.toSet());
+        Set<Long> menuIds = new HashSet<>();
+        for (RoleMenu roleMenu : roleMenus) {
+            menuIds.add(roleMenu.getMenu().getId());
+        }
 
         List<Menu> menus = menuRepository.findAllById(menuIds);
-        allowedPaths = menus.stream().map(Menu::getPath).collect(Collectors.toSet());
+        allowedPaths = menus.stream().map(menu -> menu.getPath()).collect(Collectors.toSet());
         // 放入缓存
         userPermissionsCache.put(username, allowedPaths);
       }

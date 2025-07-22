@@ -2,6 +2,8 @@ package com.kazibu.auth.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "user")
@@ -24,6 +26,10 @@ public class User {
 
   @Column(name = "update_time")
   private LocalDateTime updateTime = LocalDateTime.now();
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+  @JsonIgnore
+  private java.util.List<UserRole> userRoles = new java.util.ArrayList<>();
 
   public Long getId() {
     return id;

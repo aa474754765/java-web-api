@@ -2,6 +2,10 @@ package com.kazibu.auth.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "menu")
@@ -13,8 +17,10 @@ public class Menu {
   @Column(nullable = false, length = 100)
   private String name;
 
-  @Column(name = "parent_id")
-  private Long parentId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "parent_id", referencedColumnName = "id")
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Menu parent;
 
   @Column(length = 200)
   private String path;
@@ -25,12 +31,29 @@ public class Menu {
   @Column(name = "sort")
   private Integer sort;
 
-  @Column(name = "create_time")
+  @Column(name = "create_time", updatable = false)
   private LocalDateTime createTime = LocalDateTime.now();
 
   @Column(name = "update_time")
   private LocalDateTime updateTime = LocalDateTime.now();
 
+  @OneToMany(mappedBy = "menu", cascade = CascadeType.REMOVE, orphanRemoval = true)
+  @JsonIgnore
+  private java.util.List<RoleMenu> roleMenus = new java.util.ArrayList<>();
+
+  // 构造函数
+  public Menu() {
+  }
+
+  public Menu(String name, Menu parent, String path, String icon, Integer sort) {
+    this.name = name;
+    this.parent = parent;
+    this.path = path;
+    this.icon = icon;
+    this.sort = sort;
+  }
+
+  // Getter方法
   public Long getId() {
     return id;
   }
@@ -39,8 +62,12 @@ public class Menu {
     return name;
   }
 
+  public Menu getParent() {
+    return parent;
+  }
+
   public Long getParentId() {
-    return parentId;
+    return parent != null ? parent.getId() : null;
   }
 
   public String getPath() {
@@ -63,6 +90,7 @@ public class Menu {
     return updateTime;
   }
 
+  // Setter方法
   public void setId(Long id) {
     this.id = id;
   }
@@ -71,8 +99,8 @@ public class Menu {
     this.name = name;
   }
 
-  public void setParentId(Long parentId) {
-    this.parentId = parentId;
+  public void setParent(Menu parent) {
+    this.parent = parent;
   }
 
   public void setPath(String path) {
@@ -93,5 +121,11 @@ public class Menu {
 
   public void setUpdateTime(LocalDateTime updateTime) {
     this.updateTime = updateTime;
+  }
+
+  // 业务方法
+  @PreUpdate
+  protected void onUpdate() {
+    this.updateTime = LocalDateTime.now();
   }
 }

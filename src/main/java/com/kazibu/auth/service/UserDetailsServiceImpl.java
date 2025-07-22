@@ -56,8 +56,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     // 分配默认角色 USER
     roleRepository.findByName("USER").ifPresent(role -> {
       UserRole userRole = new UserRole();
-      userRole.setUserId(user.getId());
-      userRole.setRoleId(role.getId());
+      userRole.setUser(user);
+      userRole.setRole(role);
       userRoleRepository.save(userRole);
     });
   }
@@ -74,7 +74,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     List<UserRole> userRoles = userRoleRepository.findAllByUserId(userId);
     List<String> roles = new ArrayList<>();
     for (UserRole ur : userRoles) {
-        roleRepository.findById(ur.getRoleId()).ifPresent(role -> roles.add(role.getName()));
+        if (ur.getRole() != null) {
+            roles.add(ur.getRole().getName());
+        }
     }
     return roles;
 }

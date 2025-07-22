@@ -1,6 +1,8 @@
 package com.kazibu.auth.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "user_role")
@@ -9,11 +11,17 @@ public class UserRole {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "user_id", nullable = false)
-  private Long userId;
+  // 用户
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private User user;
 
-  @Column(name = "role_id", nullable = false)
-  private Long roleId;
+  // 角色
+  @ManyToOne
+  @JoinColumn(name = "role_id", nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Role role;
 
   public Long getId() {
     return id;
@@ -23,19 +31,19 @@ public class UserRole {
     this.id = id;
   }
 
-  public Long getUserId() {
-    return userId;
+  public User getUser() {
+    return user;
   }
 
-  public void setUserId(Long userId) {
-    this.userId = userId;
+  public void setUser(User user) {
+    this.user = user;
   }
 
-  public Long getRoleId() {
-    return roleId;
+  public Role getRole() {
+    return role;
   }
 
-  public void setRoleId(Long roleId) {
-    this.roleId = roleId;
+  public void setRole(Role role) {
+    this.role = role;
   }
 }
