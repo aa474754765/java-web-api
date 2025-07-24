@@ -95,14 +95,14 @@ public class PermissionFilter extends OncePerRequestFilter {
         List<UserRole> userRoles = userRoleRepository.findAllByUserId(user.getId());
         List<Long> roleIds = new ArrayList<>();
         for (UserRole userRole : userRoles) {
-            roleIds.add(userRole.getRole().getId());
+          roleIds.add(userRole.getRole().getId());
         }
 
         // 获取角色对应的所有菜单
         List<RoleMenu> roleMenus = roleMenuRepository.findAllByRoleIdIn(roleIds);
         Set<Long> menuIds = new HashSet<>();
         for (RoleMenu roleMenu : roleMenus) {
-            menuIds.add(roleMenu.getMenu().getId());
+          menuIds.add(roleMenu.getMenu().getId());
         }
 
         List<Menu> menus = menuRepository.findAllById(menuIds);

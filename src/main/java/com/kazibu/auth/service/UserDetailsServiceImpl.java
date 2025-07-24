@@ -26,9 +26,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     User user = userRepository.findByUsername(username)
         .orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+
     return org.springframework.security.core.userdetails.User
         .withUsername(user.getUsername())
         .password(user.getPassword())
+        .disabled(!user.getEnabled()) // 设置用户是否被禁用
         .authorities("ROLE_USER") // 可根据实际角色表做扩展
         .build();
   }
@@ -41,6 +43,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
   /**
    * 检查指定用户名是否已存在
+   * 
    * @param username 用户名
    * @return 如果用户名已存在返回true，否则返回false
    */
@@ -64,6 +67,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
   /**
    * 判断指定用户名是否存在于数据库中
+   * 
    * @param username 用户名
    * @return 如果用户名已存在返回true，否则返回false
    */
@@ -74,10 +78,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     List<UserRole> userRoles = userRoleRepository.findAllByUserId(userId);
     List<String> roles = new ArrayList<>();
     for (UserRole ur : userRoles) {
-        if (ur.getRole() != null) {
-            roles.add(ur.getRole().getName());
-        }
+      if (ur.getRole() != null) {
+        roles.add(ur.getRole().getName());
+      }
     }
     return roles;
-}
+  }
 }
