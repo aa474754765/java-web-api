@@ -8,6 +8,7 @@ import com.kazibu.auth.entity.Role;
 import com.kazibu.auth.entity.UserRole;
 import com.kazibu.auth.repository.RoleRepository;
 import com.kazibu.auth.repository.UserRoleRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user_management")
+@Tag(name = "用户管理", description = "用户的增删改查接口")
 public class UserController {
 
   @Autowired

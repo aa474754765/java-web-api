@@ -11,10 +11,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import com.kazibu.system.entity.Result;
 import com.kazibu.system.enumData.ErrorCode;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import com.kazibu.auth.security.JwtUtil;
 
 @RestController
+@Tag(name = "认证管理", description = "用户登录注册接口")
 public class AuthController {
 
   @Autowired

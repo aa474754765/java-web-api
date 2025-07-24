@@ -4,6 +4,7 @@ import com.kazibu.auth.entity.Role;
 import com.kazibu.auth.service.RoleService;
 import com.kazibu.auth.dto.RoleDto;
 import com.kazibu.system.entity.Result;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/role_management")
+@Tag(name = "角色管理", description = "角色的增删改查接口")
 public class RoleController {
 
   @Autowired
