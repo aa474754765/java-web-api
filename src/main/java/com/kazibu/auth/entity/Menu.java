@@ -6,6 +6,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import jakarta.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "menu")
@@ -17,9 +18,10 @@ public class Menu {
   @Column(nullable = false, length = 100)
   private String name;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "parent_id", referencedColumnName = "id")
   @OnDelete(action = OnDeleteAction.CASCADE)
+  @JsonIgnore
   private Menu parent;
 
   @Column(length = 200)
@@ -40,6 +42,9 @@ public class Menu {
   @OneToMany(mappedBy = "menu", cascade = CascadeType.REMOVE, orphanRemoval = true)
   @JsonIgnore
   private java.util.List<RoleMenu> roleMenus = new java.util.ArrayList<>();
+
+  @Transient
+  private java.util.List<Menu> children = new java.util.ArrayList<>();
 
   // 构造函数
   public Menu() {
@@ -88,6 +93,14 @@ public class Menu {
 
   public LocalDateTime getUpdateTime() {
     return updateTime;
+  }
+
+  public java.util.List<Menu> getChildren() {
+    return children;
+  }
+
+  public void setChildren(java.util.List<Menu> children) {
+    this.children = children;
   }
 
   // Setter方法
