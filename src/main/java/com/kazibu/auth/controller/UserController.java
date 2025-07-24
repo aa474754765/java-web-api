@@ -8,9 +8,10 @@ import com.kazibu.auth.entity.Role;
 import com.kazibu.auth.entity.UserRole;
 import com.kazibu.auth.repository.RoleRepository;
 import com.kazibu.auth.repository.UserRoleRepository;
-import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 

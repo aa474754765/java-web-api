@@ -7,12 +7,13 @@ import com.kazibu.auth.repository.UserRepository;
 import com.kazibu.auth.repository.UserRoleRepository;
 import com.kazibu.auth.repository.RoleRepository;
 import com.kazibu.auth.service.UserService;
+import com.kazibu.auth.dto.UserDto;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import com.kazibu.auth.dto.UserDto;
 
 @Service
 public class UserServiceImpl implements UserService {

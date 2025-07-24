@@ -1,19 +1,19 @@
 package com.kazibu.auth.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.kazibu.auth.security.JwtUtil;
+import com.kazibu.system.entity.Result;
+import com.kazibu.system.enumData.ErrorCode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import com.kazibu.system.entity.Result;
-import com.kazibu.system.enumData.ErrorCode;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import com.kazibu.auth.security.JwtUtil;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @Tag(name = "认证管理", description = "用户登录注册接口")

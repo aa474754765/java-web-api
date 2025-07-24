@@ -1,5 +1,8 @@
 package com.kazibu.auth.config;
 
+import com.kazibu.auth.security.JwtAuthenticationFilter;
+import com.kazibu.auth.security.PermissionFilter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,9 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.kazibu.auth.security.JwtAuthenticationFilter;
-import com.kazibu.auth.security.PermissionFilter;
 
 @Configuration
 @EnableWebSecurity

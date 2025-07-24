@@ -1,17 +1,17 @@
 package com.kazibu.auth.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.*;
-import org.springframework.stereotype.Service;
-
 import com.kazibu.auth.entity.User;
 import com.kazibu.auth.entity.UserRole;
 import com.kazibu.auth.repository.UserRepository;
 import com.kazibu.auth.repository.RoleRepository;
 import com.kazibu.auth.repository.UserRoleRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.*;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {

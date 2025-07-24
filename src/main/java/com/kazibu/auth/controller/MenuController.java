@@ -4,12 +4,12 @@ import com.kazibu.auth.entity.Menu;
 import com.kazibu.auth.service.MenuService;
 import com.kazibu.auth.dto.MenuDto;
 import com.kazibu.system.entity.Result;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/menu_management")
