@@ -1,8 +1,9 @@
 package com.kazibu.auth.controller;
 
-import com.kazibu.auth.entity.Role;
 import com.kazibu.auth.service.RoleService;
-import com.kazibu.auth.dto.RoleDto;
+import com.kazibu.auth.dto.RoleResponse;
+import com.kazibu.auth.dto.RoleRequest;
+import com.kazibu.auth.dto.MenuInfo;
 import com.kazibu.system.entity.Result;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,37 +20,53 @@ public class RoleController {
   @Autowired
   private RoleService roleService;
 
-  @PostMapping("/add")
-  public Result<Role> addRole(@RequestBody RoleDto.RoleRequest request) {
-    Role role = new Role();
-    role.setName(request.getName());
-    role.setDescription(request.getDescription());
-
-    return Result.success(roleService.addRole(role));
+  // 1. 查询所有角色（不包含菜单信息）
+  @PostMapping("/get_all_roles")
+  public Result<List<RoleResponse>> getAllRoles() {
+    List<RoleResponse> roles = roleService.getAllRoles();
+    return Result.success(roles);
   }
 
-  @PostMapping("/edit")
-  public Result<Role> updateRole(@RequestBody RoleDto.RoleRequest request) {
-    Role existingRole = roleService.getRoleById(request.getId());
-    if (existingRole == null) {
-      return Result.error("ROLE_NOT_FOUND", "角色不存在");
+  // 2. 根据角色ID获取菜单列表
+  @PostMapping("/get_role_menus")
+  public Result<List<MenuInfo>> getRoleMenus(@RequestBody RoleRequest request) {
+    if (request.getId() == null) {
+      return Result.error("INVALID_PARAM", "角色ID不能为空");
+    }
+    List<MenuInfo> menus = roleService.getRoleMenus(request.getId());
+    return Result.success(menus);
+  }
+
+  // 3. 创建角色
+  @PostMapping("/create")
+  public Result<String> createRole(@RequestBody RoleRequest request) {
+    if (request.getName() == null || request.getName().trim().isEmpty()) {
+      return Result.error("INVALID_PARAM", "角色名称不能为空");
     }
 
-    existingRole.setName(request.getName());
-    existingRole.setDescription(request.getDescription());
-
-    return Result.success(roleService.updateRole(existingRole));
+    boolean success = roleService.createRole(request);
+    if (success) {
+      return Result.success("创建成功");
+    } else {
+      return Result.error("CREATE_FAILED", "创建失败，角色名称可能已存在");
+    }
   }
 
-  @PostMapping("/delete")
-  public Result<String> deleteRole(@RequestBody RoleDto.RoleRequest request) {
-    roleService.deleteRole(request.getId());
-    return Result.success("删除成功");
-  }
+  // 4. 编辑角色
+  @PostMapping("/update")
+  public Result<String> updateRole(@RequestBody RoleRequest request) {
+    if (request.getId() == null) {
+      return Result.error("INVALID_PARAM", "角色ID不能为空");
+    }
+    if (request.getName() == null || request.getName().trim().isEmpty()) {
+      return Result.error("INVALID_PARAM", "角色名称不能为空");
+    }
 
-  @PostMapping("/list")
-  public Result<List<Role>> getRoles(@RequestBody RoleDto.RoleQuery query) {
-    List<Role> roles = roleService.getRolesByName(query.getName());
-    return Result.success(roles);
+    boolean success = roleService.updateRole(request);
+    if (success) {
+      return Result.success("更新成功");
+    } else {
+      return Result.error("UPDATE_FAILED", "更新失败，角色不存在或名称已存在");
+    }
   }
 }
