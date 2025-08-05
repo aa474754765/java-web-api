@@ -27,13 +27,13 @@ public class RoleController {
     return Result.success(roles);
   }
 
-  // 2. 根据角色ID获取菜单列表
+  // 2. 根据角色ID或名称获取菜单列表
   @PostMapping("/get_role_menus")
   public Result<List<MenuInfo>> getRoleMenus(@RequestBody RoleRequest request) {
-    if (request.getId() == null) {
-      return Result.error("INVALID_PARAM", "角色ID不能为空");
+    if (request.getId() == null && (request.getName() == null || request.getName().trim().isEmpty())) {
+      return Result.error("INVALID_PARAM", "角色ID或角色名称不能为空");
     }
-    List<MenuInfo> menus = roleService.getRoleMenus(request.getId());
+    List<MenuInfo> menus = roleService.getRoleMenusByIdOrName(request.getId(), request.getName());
     return Result.success(menus);
   }
 

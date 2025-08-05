@@ -15,4 +15,10 @@ public interface MenuService {
   List<Menu> getMenusByParentId(Long parentId);
 
   List<Menu> getAllMenusWithChildren();
+
+  // 获取当前登录用户的所有菜单
+  List<Menu> getCurrentUserMenus(String username);
+
+  // 获取当前登录用户的完整信息（包含用户信息和菜单）
+  com.kazibu.auth.dto.UserInfoDto getCurrentUserInfo(String username);
 }

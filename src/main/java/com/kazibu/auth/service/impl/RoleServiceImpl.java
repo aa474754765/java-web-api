@@ -70,6 +70,25 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
+  public List<MenuInfo> getRoleMenusByIdOrName(Long roleId, String roleName) {
+    // 优先通过ID查询
+    if (roleId != null) {
+      return getRoleMenus(roleId);
+    }
+
+    // 如果ID为空，则通过名称查询
+    if (roleName != null && !roleName.trim().isEmpty()) {
+      Role role = roleRepository.findByName(roleName.trim()).orElse(null);
+      if (role != null) {
+        return getRoleMenus(role.getId());
+      }
+    }
+
+    // 如果都为空或找不到角色，返回空列表
+    return new ArrayList<>();
+  }
+
+  @Override
   @Transactional
   public boolean createRole(RoleRequest request) {
     try {

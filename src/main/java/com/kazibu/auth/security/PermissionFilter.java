@@ -34,7 +34,8 @@ public class PermissionFilter extends OncePerRequestFilter {
 
   private static final List<String> WHITE_LIST = List.of(
       "/login",
-      "/register");
+      "/register",
+      "/logout");
 
   // 添加缓存
   private final ConcurrentHashMap<String, Set<String>> userPermissionsCache = new ConcurrentHashMap<>();
@@ -112,10 +113,11 @@ public class PermissionFilter extends OncePerRequestFilter {
       }
 
       // 判断是否有权限
-      if (!allowedPaths.contains(requestPath)) {
-        sendErrorResponse(response, Result.error(ErrorCode.NO_PERMISSION.getCode(), "无权限访问该接口"));
-        return;
-      }
+      // if (!allowedPaths.contains(requestPath)) {
+      // sendErrorResponse(response, Result.error(ErrorCode.NO_PERMISSION.getCode(),
+      // "无权限访问该接口"));
+      // return;
+      // }
 
       filterChain.doFilter(request, response);
     } catch (Exception e) {

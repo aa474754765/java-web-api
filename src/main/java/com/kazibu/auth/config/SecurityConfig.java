@@ -33,13 +33,15 @@ public class SecurityConfig {
         .requestMatchers(
             "/login",
             "/register",
+            "/logout",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html")
         .permitAll()
         .anyRequest().authenticated()
         .and()
-        .formLogin().disable();
+        .formLogin().disable()
+        .logout().disable();
 
     // 加入jwtAuthenticationFilter
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

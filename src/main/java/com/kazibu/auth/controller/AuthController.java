@@ -1,11 +1,14 @@
 package com.kazibu.auth.controller;
 
+import com.kazibu.auth.dto.AuthDto;
 import com.kazibu.auth.security.JwtUtil;
 import com.kazibu.system.entity.Result;
 import com.kazibu.system.enumData.ErrorCode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -30,15 +33,16 @@ public class AuthController {
 
   // 登陆接口
   @PostMapping("/login")
-  public Result<Object> login(@RequestParam String username, @RequestParam String password) {
+  public Result<Object> login(@RequestBody AuthDto.LoginRequest request) {
     try {
-      authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-      UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+      authenticationManager
+          .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+      UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
       String token = jwtUtil.generateToken(userDetails);
 
       // 获取用户信息
       // 获取用户角色
-      List<String> roles = userDetailsService.getUserRolesByUserName(username);
+      List<String> roles = userDetailsService.getUserRolesByUserName(request.getUsername());
 
       // 构建返回数据
       Map<String, Object> data = new HashMap<>();
@@ -57,19 +61,43 @@ public class AuthController {
   }
 
   @PostMapping("/register")
-  public Result<String> registerUser(@RequestParam String username, @RequestParam String password) {
+  public Result<String> registerUser(@RequestBody AuthDto.RegisterRequest request) {
     // 检查用户名是否已存在
-    if (userDetailsService.usernameExists(username)) {
+    if (userDetailsService.usernameExists(request.getUsername())) {
       return Result.error(ErrorCode.USERNAME_EXISTS.getCode(), ErrorCode.USERNAME_EXISTS.getMsg());
     }
 
     // 创建新用户
     userDetailsService.createUser(
-        username,
-        passwordEncoder.encode(password)
+        request.getUsername(),
+        passwordEncoder.encode(request.getPassword())
     // 其他字段
     );
 
     return Result.success("用户注册成功！");
+  }
+
+  // 登出接口
+  @PostMapping("/logout")
+  public Result<String> logout() {
+    try {
+      // 获取当前登录用户信息
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      if (authentication == null || !authentication.isAuthenticated()) {
+        return Result.error("NOT_AUTHENTICATED", "用户未登录");
+      }
+
+      // 清除Spring Security上下文中的认证信息
+      SecurityContextHolder.clearContext();
+
+      // 这里可以添加额外的登出逻辑，比如：
+      // 1. 将token加入黑名单
+      // 2. 记录登出日志
+      // 3. 清除用户会话信息等
+
+      return Result.success("登出成功");
+    } catch (Exception e) {
+      return Result.error("LOGOUT_FAILED", "登出失败");
+    }
   }
 }

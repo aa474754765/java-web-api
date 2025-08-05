@@ -1,0 +1,72 @@
+package com.kazibu.auth.dto;
+
+import com.kazibu.auth.entity.Menu;
+import java.util.List;
+
+// 用户信息响应类
+public class UserInfoDto {
+  private Long id;
+  private String username;
+  private Boolean enabled;
+  private String createTime;
+  private String updateTime;
+  private List<String> roles;
+  private List<Menu> menus;
+
+  // getter和setter
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public Boolean getEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(Boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  public String getCreateTime() {
+    return createTime;
+  }
+
+  public void setCreateTime(String createTime) {
+    this.createTime = createTime;
+  }
+
+  public String getUpdateTime() {
+    return updateTime;
+  }
+
+  public void setUpdateTime(String updateTime) {
+    this.updateTime = updateTime;
+  }
+
+  public List<String> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(List<String> roles) {
+    this.roles = roles;
+  }
+
+  public List<Menu> getMenus() {
+    return menus;
+  }
+
+  public void setMenus(List<Menu> menus) {
+    this.menus = menus;
+  }
+} 

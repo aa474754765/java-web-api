@@ -16,6 +16,9 @@ public interface RoleService {
   // 2. 根据角色ID获取菜单列表
   List<MenuInfo> getRoleMenus(Long roleId);
 
+  // 2.1. 根据角色ID或名称获取菜单列表
+  List<MenuInfo> getRoleMenusByIdOrName(Long roleId, String roleName);
+
   // 3. 创建角色
   boolean createRole(RoleRequest request);
 
