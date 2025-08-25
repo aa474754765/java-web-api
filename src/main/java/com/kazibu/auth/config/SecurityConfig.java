@@ -45,7 +45,8 @@ public class SecurityConfig {
 
     // 加入jwtAuthenticationFilter
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-    http.addFilterAfter(permissionFilter, AuthorizationFilter.class);
+    // 将PermissionFilter放在JWT过滤器之后，确保JWT认证完成后再进行权限检查
+    http.addFilterAfter(permissionFilter, JwtAuthenticationFilter.class);
 
     return http.build();
   }
