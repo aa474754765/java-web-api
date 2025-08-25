@@ -61,6 +61,8 @@ public class UserDto {
       private Long id;
       private String name;
       private String description;
+      private Boolean status;
+      private String roleName;
 
       public Long getId() {
         return id;
@@ -84,6 +86,22 @@ public class UserDto {
 
       public void setDescription(String description) {
         this.description = description;
+      }
+
+      public Boolean getStatus() {
+        return status;
+      }
+
+      public void setStatus(Boolean status) {
+        this.status = status;
+      }
+
+      public String getRoleName() {
+        return roleName;
+      }
+
+      public void setRoleName(String roleName) {
+        this.roleName = roleName;
       }
     }
 

@@ -7,6 +7,8 @@ public class RoleResponse {
   private Long id;
   private String name;
   private String description;
+  private Boolean status;
+  private String roleName;
   private String createTime;
   private String updateTime;
   private List<MenuInfo> menus;
@@ -34,6 +36,22 @@ public class RoleResponse {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public Boolean getStatus() {
+    return status;
+  }
+
+  public void setStatus(Boolean status) {
+    this.status = status;
+  }
+
+  public String getRoleName() {
+    return roleName;
+  }
+
+  public void setRoleName(String roleName) {
+    this.roleName = roleName;
   }
 
   public String getCreateTime() {

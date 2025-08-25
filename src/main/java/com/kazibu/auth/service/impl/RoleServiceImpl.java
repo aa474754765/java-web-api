@@ -101,6 +101,8 @@ public class RoleServiceImpl implements RoleService {
       Role role = new Role();
       role.setName(request.getName());
       role.setDescription(request.getDescription());
+      role.setStatus(request.getStatus() != null ? request.getStatus() : true);
+      role.setRoleName(request.getRoleName() != null ? request.getRoleName() : request.getName());
       role = roleRepository.save(role);
 
       // 分配菜单
@@ -133,6 +135,12 @@ public class RoleServiceImpl implements RoleService {
       // 更新角色基本信息
       existingRole.setName(request.getName());
       existingRole.setDescription(request.getDescription());
+      if (request.getStatus() != null) {
+        existingRole.setStatus(request.getStatus());
+      }
+      if (request.getRoleName() != null) {
+        existingRole.setRoleName(request.getRoleName());
+      }
       roleRepository.save(existingRole);
 
       // 重新分配菜单
@@ -155,6 +163,8 @@ public class RoleServiceImpl implements RoleService {
     response.setId(role.getId());
     response.setName(role.getName());
     response.setDescription(role.getDescription());
+    response.setStatus(role.getStatus());
+    response.setRoleName(role.getRoleName());
     response.setCreateTime(role.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
     response.setUpdateTime(role.getUpdateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
     response.setMenus(new ArrayList<>()); // 空菜单列表
@@ -169,6 +179,8 @@ public class RoleServiceImpl implements RoleService {
     response.setId(role.getId());
     response.setName(role.getName());
     response.setDescription(role.getDescription());
+    response.setStatus(role.getStatus());
+    response.setRoleName(role.getRoleName());
     response.setCreateTime(role.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
     response.setUpdateTime(role.getUpdateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 

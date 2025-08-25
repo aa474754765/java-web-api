@@ -18,6 +18,12 @@ public class Role {
   @Column(length = 200)
   private String description;
 
+  @Column(nullable = false)
+  private Boolean status = true;
+
+  @Column(name = "role_name", nullable = false, length = 100)
+  private String roleName;
+
   @Column(name = "create_time")
   private LocalDateTime createTime = LocalDateTime.now();
 
@@ -44,6 +50,14 @@ public class Role {
     return description;
   }
 
+  public Boolean getStatus() {
+    return status;
+  }
+
+  public String getRoleName() {
+    return roleName;
+  }
+
   public LocalDateTime getCreateTime() {
     return createTime;
   }
@@ -62,6 +76,14 @@ public class Role {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public void setStatus(Boolean status) {
+    this.status = status;
+  }
+
+  public void setRoleName(String roleName) {
+    this.roleName = roleName;
   }
 
   public void setCreateTime(LocalDateTime createTime) {

@@ -101,6 +101,8 @@ public class UserServiceImpl implements UserService {
           roleInfo.setId(role.getId());
           roleInfo.setName(role.getName());
           roleInfo.setDescription(role.getDescription());
+          roleInfo.setStatus(role.getStatus());
+          roleInfo.setRoleName(role.getRoleName());
           return roleInfo;
         })
         .collect(java.util.stream.Collectors.toList());

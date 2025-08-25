@@ -43,6 +43,9 @@ public class RoleController {
     if (request.getName() == null || request.getName().trim().isEmpty()) {
       return Result.error("INVALID_PARAM", "角色名称不能为空");
     }
+    if (request.getRoleName() == null || request.getRoleName().trim().isEmpty()) {
+      return Result.error("INVALID_PARAM", "角色显示名称不能为空");
+    }
 
     boolean success = roleService.createRole(request);
     if (success) {
@@ -61,6 +64,9 @@ public class RoleController {
     if (request.getName() == null || request.getName().trim().isEmpty()) {
       return Result.error("INVALID_PARAM", "角色名称不能为空");
     }
+    if (request.getRoleName() == null || request.getRoleName().trim().isEmpty()) {
+      return Result.error("INVALID_PARAM", "角色显示名称不能为空");
+    }
 
     boolean success = roleService.updateRole(request);
     if (success) {
@@ -68,5 +74,11 @@ public class RoleController {
     } else {
       return Result.error("UPDATE_FAILED", "更新失败，角色不存在或名称已存在");
     }
+  }
+
+  // 5. 测试权限控制接口（需要登录）
+  @PostMapping("/test_auth")
+  public Result<String> testAuth() {
+    return Result.success("权限验证通过，当前用户已登录");
   }
 }
