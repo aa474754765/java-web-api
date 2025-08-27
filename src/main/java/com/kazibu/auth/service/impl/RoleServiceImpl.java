@@ -40,6 +40,28 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
+  public List<RoleResponse> getRolesByCondition(String roleName, String name, Boolean status) {
+    List<Role> roles;
+
+    // 如果所有查询条件都为空，返回所有角色
+    if ((roleName == null || roleName.trim().isEmpty()) &&
+        (name == null || name.trim().isEmpty()) &&
+        status == null) {
+      roles = roleRepository.findAll();
+    } else {
+      // 根据条件查询
+      roles = roleRepository.findByConditions(
+          roleName != null ? roleName.trim() : null,
+          name != null ? name.trim() : null,
+          status);
+    }
+
+    return roles.stream()
+        .map(this::convertToRoleResponseBasic)
+        .collect(Collectors.toList());
+  }
+
+  @Override
   public List<RoleResponse> getAllRolesWithMenus() {
     List<Role> roles = roleRepository.findAll();
     return roles.stream()
@@ -148,6 +170,31 @@ public class RoleServiceImpl implements RoleService {
       if (request.getMenuIds() != null && !request.getMenuIds().isEmpty()) {
         assignMenusToRole(existingRole.getId(), request.getMenuIds());
       }
+
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  @Override
+  @Transactional
+  public boolean deleteRole(RoleRequest request) {
+    try {
+      if (request.getId() == null) {
+        return false; // 角色ID不能为空
+      }
+
+      Role existingRole = roleRepository.findById(request.getId()).orElse(null);
+      if (existingRole == null) {
+        return false; // 角色不存在
+      }
+
+      // 先删除角色与菜单的关联关系
+      roleMenuRepository.deleteByRoleId(existingRole.getId());
+
+      // 删除角色
+      roleRepository.deleteById(existingRole.getId());
 
       return true;
     } catch (Exception e) {

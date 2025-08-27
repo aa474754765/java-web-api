@@ -21,9 +21,16 @@ public class RoleController {
   private RoleService roleService;
 
   // 1. 查询所有角色（不包含菜单信息）
-  @PostMapping("/get_all_roles")
-  public Result<List<RoleResponse>> getAllRoles() {
-    List<RoleResponse> roles = roleService.getAllRoles();
+  @PostMapping("/list")
+  public Result<List<RoleResponse>> getAllRoles(@RequestBody(required = false) RoleRequest request) {
+    List<RoleResponse> roles;
+    if (request == null) {
+      // 如果没有查询条件，返回所有角色
+      roles = roleService.getAllRoles();
+    } else {
+      // 根据查询条件过滤角色
+      roles = roleService.getRolesByCondition(request.getRoleName(), request.getName(), request.getStatus());
+    }
     return Result.success(roles);
   }
 
@@ -76,9 +83,19 @@ public class RoleController {
     }
   }
 
-  // 5. 测试权限控制接口（需要登录）
-  @PostMapping("/test_auth")
-  public Result<String> testAuth() {
-    return Result.success("权限验证通过，当前用户已登录");
+  // 5. 删除角色
+  @PostMapping("/delete")
+  public Result<String> deleteRole(@RequestBody RoleRequest request) {
+    if (request.getId() == null) {
+      return Result.error("INVALID_PARAM", "角色ID不能为空");
+    }
+
+    boolean success = roleService.deleteRole(request);
+    if (success) {
+      return Result.success("删除成功");
+    } else {
+      return Result.error("DELETE_FAILED", "删除失败，角色不存在或已被删除");
+    }
   }
+
 }

@@ -10,7 +10,10 @@ public interface RoleService {
   // 1. 查询所有角色（不包含菜单信息）
   List<RoleResponse> getAllRoles();
 
-  // 1.1. 查询所有角色（包含菜单信息）
+  // 1.1. 根据条件查询角色（支持roleName、name、status查询）
+  List<RoleResponse> getRolesByCondition(String roleName, String name, Boolean status);
+
+  // 1.2. 查询所有角色（包含菜单信息）
   List<RoleResponse> getAllRolesWithMenus();
 
   // 2. 根据角色ID获取菜单列表
@@ -24,4 +27,7 @@ public interface RoleService {
 
   // 4. 编辑角色
   boolean updateRole(RoleRequest request);
+
+  // 5. 删除角色
+  boolean deleteRole(RoleRequest request);
 }
