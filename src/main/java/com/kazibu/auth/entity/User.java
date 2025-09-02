@@ -22,6 +22,12 @@ public class User {
   @Column(nullable = false)
   private Boolean enabled = true;
 
+  @Column(name = "nick_name", length = 100)
+  private String nickName;
+
+  @Column(name = "phone_number", length = 20)
+  private String phoneNumber;
+
   @Column(name = "create_time")
   private LocalDateTime createTime = LocalDateTime.now();
 
@@ -62,6 +68,22 @@ public class User {
 
   public void setEnabled(Boolean enabled) {
     this.enabled = enabled;
+  }
+
+  public String getNickName() {
+    return nickName;
+  }
+
+  public void setNickName(String nickName) {
+    this.nickName = nickName;
+  }
+
+  public String getPhoneNumber() {
+    return phoneNumber;
+  }
+
+  public void setPhoneNumber(String phoneNumber) {
+    this.phoneNumber = phoneNumber;
   }
 
   public LocalDateTime getCreateTime() {

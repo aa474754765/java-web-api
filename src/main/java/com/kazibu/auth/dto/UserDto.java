@@ -6,6 +6,8 @@ public class UserDto {
   public static class UserRequest {
     private Long id; // 编辑和删除时需要
     private Boolean enabled; // 编辑时需要
+    private String nickName; // 用户昵称
+    private String phoneNumber; // 手机号码
     private java.util.List<Long> roleIds; // 编辑时需要，角色ID列表
 
     // getter和setter
@@ -25,6 +27,22 @@ public class UserDto {
       this.enabled = enabled;
     }
 
+    public String getNickName() {
+      return nickName;
+    }
+
+    public void setNickName(String nickName) {
+      this.nickName = nickName;
+    }
+
+    public String getPhoneNumber() {
+      return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+      this.phoneNumber = phoneNumber;
+    }
+
     public java.util.List<Long> getRoleIds() {
       return roleIds;
     }
@@ -37,6 +55,9 @@ public class UserDto {
   // 查询用户请求类
   public static class UserQuery {
     private String username; // 按用户名模糊查询
+    private String nickName; // 按用户昵称模糊查询
+    private String phoneNumber; // 按手机号码模糊查询
+    private Boolean enabled; // 按启用状态查询
 
     public String getUsername() {
       return username;
@@ -45,6 +66,30 @@ public class UserDto {
     public void setUsername(String username) {
       this.username = username;
     }
+
+    public String getNickName() {
+      return nickName;
+    }
+
+    public void setNickName(String nickName) {
+      this.nickName = nickName;
+    }
+
+    public String getPhoneNumber() {
+      return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+      this.phoneNumber = phoneNumber;
+    }
+
+    public Boolean getEnabled() {
+      return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+      this.enabled = enabled;
+    }
   }
 
   // 用户响应类，包含角色信息
@@ -52,8 +97,10 @@ public class UserDto {
     private Long id;
     private String username;
     private Boolean enabled;
-    private java.time.LocalDateTime createTime;
-    private java.time.LocalDateTime updateTime;
+    private String nickName;
+    private String phoneNumber;
+    private String createTime;
+    private String updateTime;
     private java.util.List<RoleInfo> roles;
 
     // 角色信息类
@@ -130,19 +177,35 @@ public class UserDto {
       this.enabled = enabled;
     }
 
-    public java.time.LocalDateTime getCreateTime() {
+    public String getNickName() {
+      return nickName;
+    }
+
+    public void setNickName(String nickName) {
+      this.nickName = nickName;
+    }
+
+    public String getPhoneNumber() {
+      return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+      this.phoneNumber = phoneNumber;
+    }
+
+    public String getCreateTime() {
       return createTime;
     }
 
-    public void setCreateTime(java.time.LocalDateTime createTime) {
+    public void setCreateTime(String createTime) {
       this.createTime = createTime;
     }
 
-    public java.time.LocalDateTime getUpdateTime() {
+    public String getUpdateTime() {
       return updateTime;
     }
 
-    public void setUpdateTime(java.time.LocalDateTime updateTime) {
+    public void setUpdateTime(String updateTime) {
       this.updateTime = updateTime;
     }
 

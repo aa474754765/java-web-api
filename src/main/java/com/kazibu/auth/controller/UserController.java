@@ -30,16 +30,14 @@ public class UserController {
   private RoleRepository roleRepository;
 
   @PostMapping("/edit")
-  public Result<User> updateUser(@RequestBody UserDto.UserRequest request) {
+  public Result<UserDto.UserResponse> updateUser(@RequestBody UserDto.UserRequest request) {
     User existingUser = userService.getUserById(request.getId());
     if (existingUser == null) {
       return Result.error("USER_NOT_FOUND", "用户不存在");
     }
 
-    // 更新用户状态
-    if (request.getEnabled() != null) {
-      existingUser.setEnabled(request.getEnabled());
-    }
+    // 更新用户基本信息（状态、昵称、手机号）
+    User updatedUser = userService.updateUserInfo(request);
 
     // 更新用户角色
     if (request.getRoleIds() != null) {
@@ -50,7 +48,7 @@ public class UserController {
       // 分配新角色
       for (Long roleId : request.getRoleIds()) {
         Role role = roleRepository.findById(roleId).orElse(null);
-        if (role != null && !"ADMIN".equalsIgnoreCase(role.getName())) {
+        if (role != null) {
           UserRole userRole = new UserRole();
           userRole.setUser(existingUser);
           userRole.setRole(role);
@@ -59,7 +57,9 @@ public class UserController {
       }
     }
 
-    return Result.success(userService.updateUser(existingUser));
+    // 返回格式化的用户响应信息
+    UserDto.UserResponse userResponse = userService.convertUserToResponse(updatedUser);
+    return Result.success(userResponse);
   }
 
   @PostMapping("/delete")
@@ -74,7 +74,15 @@ public class UserController {
 
   @PostMapping("/list")
   public Result<List<UserDto.UserResponse>> getUsers(@RequestBody UserDto.UserQuery query) {
-    List<UserDto.UserResponse> users = userService.getUsersWithRoles(query.getUsername());
+    List<UserDto.UserResponse> users;
+    if (query == null) {
+      // 如果没有查询条件，返回所有用户
+      users = userService.getUsersWithRoles(null);
+    } else {
+      // 根据查询条件过滤用户
+      users = userService.getUsersWithRolesByCondition(query.getUsername(), query.getNickName(),
+          query.getPhoneNumber(), query.getEnabled());
+    }
     return Result.success(users);
   }
 }
