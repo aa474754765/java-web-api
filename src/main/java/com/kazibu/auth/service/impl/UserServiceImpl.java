@@ -69,9 +69,15 @@ public class UserServiceImpl implements UserService {
       throw new RuntimeException("不能删除ADMIN用户");
     }
 
-    // 软删除：设置enabled为false
-    user.setEnabled(false);
-    return userRepository.save(user);
+    // 先删除用户角色关联
+    List<UserRole> userRoles = userRoleRepository.findAllByUserId(id);
+    if (!userRoles.isEmpty()) {
+      userRoleRepository.deleteAll(userRoles);
+    }
+
+    // 物理删除用户
+    userRepository.delete(user);
+    return user;
   }
 
   @Override

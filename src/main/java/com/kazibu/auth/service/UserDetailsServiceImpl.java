@@ -42,17 +42,27 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   }
 
   /**
-   * 检查指定用户名是否已存在
+   * 创建新用户
    * 
-   * @param username 用户名
-   * @return 如果用户名已存在返回true，否则返回false
+   * @param username        用户名
+   * @param encodedPassword 加密后的密码
+   * @param nickName        用户昵称（可选）
+   * @param phoneNumber     手机号码（可选）
    */
-  public void createUser(String username, String encodedPassword) {
+  public void createUser(String username, String encodedPassword, String nickName, String phoneNumber) {
     User user = new User();
     user.setUsername(username);
     user.setPassword(encodedPassword);
     // 设置其他默认值
     user.setEnabled(true);
+
+    // 设置可选字段
+    if (nickName != null && !nickName.trim().isEmpty()) {
+      user.setNickName(nickName.trim());
+    }
+    if (phoneNumber != null && !phoneNumber.trim().isEmpty()) {
+      user.setPhoneNumber(phoneNumber.trim());
+    }
 
     userRepository.save(user);
 
@@ -63,6 +73,28 @@ public class UserDetailsServiceImpl implements UserDetailsService {
       userRole.setRole(role);
       userRoleRepository.save(userRole);
     });
+  }
+
+  /**
+   * 重置用户密码
+   * 
+   * @param username           用户名
+   * @param newEncodedPassword 新加密后的密码
+   * @return 是否重置成功
+   */
+  public boolean resetPassword(String username, String newEncodedPassword) {
+    if (username == null || username.trim().isEmpty()) {
+      return false;
+    }
+
+    java.util.Optional<User> userOpt = userRepository.findByUsername(username.trim());
+    if (userOpt.isPresent()) {
+      User user = userOpt.get();
+      user.setPassword(newEncodedPassword);
+      userRepository.save(user);
+      return true;
+    }
+    return false;
   }
 
   /**

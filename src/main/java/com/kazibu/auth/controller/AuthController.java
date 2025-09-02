@@ -70,11 +70,34 @@ public class AuthController {
     // 创建新用户
     userDetailsService.createUser(
         request.getUsername(),
-        passwordEncoder.encode(request.getPassword())
-    // 其他字段
-    );
+        passwordEncoder.encode(request.getPassword()),
+        request.getNickName(),
+        request.getPhoneNumber());
 
     return Result.success("用户注册成功！");
+  }
+
+  @PostMapping("/resetPassword")
+  public Result<String> resetPassword(@RequestBody AuthDto.ResetPasswordRequest request) {
+    // 验证请求参数
+    if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
+      return Result.error("INVALID_REQUEST", "用户名不能为空");
+    }
+
+    if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+      return Result.error("INVALID_REQUEST", "密码不能为空");
+    }
+
+    // 直接尝试重置密码，让服务层处理用户存在性检查
+    boolean success = userDetailsService.resetPassword(
+        request.getUsername(),
+        passwordEncoder.encode(request.getPassword()));
+
+    if (success) {
+      return Result.success("密码重置成功！");
+    } else {
+      return Result.error("USER_NOT_FOUND", "用户不存在");
+    }
   }
 
   // 登出接口
