@@ -14,7 +14,10 @@ public interface MenuService {
 
   List<Menu> getMenusByParentId(Long parentId);
 
-  List<Menu> getAllMenusWithChildren();
+  List<Menu> getAllMenus();
+
+  // 根据条件查询菜单
+  List<Menu> getMenusByConditions(Long parentId, String visible, String title);
 
   // 获取当前登录用户的所有菜单
   List<Menu> getCurrentUserMenus(String username);

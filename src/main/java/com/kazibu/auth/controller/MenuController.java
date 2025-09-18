@@ -26,6 +26,12 @@ public class MenuController {
   public Result<Menu> addMenu(@RequestBody MenuDto.MenuRequest request) {
     Menu menu = new Menu();
     menu.setName(request.getName());
+    menu.setTitle(request.getTitle());
+    menu.setComponent(request.getComponent());
+    menu.setPerms(request.getPerms());
+    menu.setVisible(request.getVisible() != null ? request.getVisible() : "1");
+    menu.setIsCache(request.getIsCache() != null ? request.getIsCache() : "0");
+    menu.setMenuType(request.getMenuType());
     menu.setPath(request.getPath());
     menu.setIcon(request.getIcon());
     menu.setSort(request.getSort());
@@ -47,9 +53,28 @@ public class MenuController {
     }
 
     existingMenu.setName(request.getName());
+    existingMenu.setTitle(request.getTitle());
+    existingMenu.setComponent(request.getComponent());
+    existingMenu.setPerms(request.getPerms());
+    if (request.getVisible() != null) {
+      existingMenu.setVisible(request.getVisible());
+    }
+    if (request.getIsCache() != null) {
+      existingMenu.setIsCache(request.getIsCache());
+    }
+    existingMenu.setMenuType(request.getMenuType());
     existingMenu.setPath(request.getPath());
     existingMenu.setIcon(request.getIcon());
     existingMenu.setSort(request.getSort());
+
+    // 处理父菜单ID
+    if (request.getParentId() != null) {
+      Menu parentMenu = menuService.getMenuById(request.getParentId());
+      existingMenu.setParent(parentMenu);
+    } else {
+      // 如果parentId为null，表示设置为根菜单
+      existingMenu.setParent(null);
+    }
 
     return Result.success(menuService.updateMenu(existingMenu));
   }
@@ -63,12 +88,38 @@ public class MenuController {
   @PostMapping("/list")
   public Result<List<Menu>> getMenusByParentId(@RequestBody MenuDto.MenuQuery query) {
     List<Menu> menus;
-    if (query.getParentId() == null) {
-      menus = menuService.getAllMenusWithChildren();
+
+    // 检查是否有任何查询条件
+    boolean hasConditions = query.getParentId() != null ||
+        (query.getVisible() != null && !query.getVisible().trim().isEmpty()) ||
+        (query.getTitle() != null && !query.getTitle().trim().isEmpty());
+
+    if (hasConditions) {
+      // 使用条件查询
+      menus = menuService.getMenusByConditions(
+          query.getParentId(),
+          query.getVisible() != null ? query.getVisible().trim() : null,
+          query.getTitle() != null ? query.getTitle().trim() : null);
     } else {
-      menus = menuService.getMenusByParentId(query.getParentId());
+      // 没有查询条件，返回所有菜单
+      menus = menuService.getAllMenus();
     }
+
     return Result.success(menus);
+  }
+
+  @PostMapping("/get")
+  public Result<Menu> getMenuById(@RequestBody MenuDto.MenuRequest request) {
+    if (request.getId() == null) {
+      return Result.error("INVALID_PARAM", "菜单ID不能为空");
+    }
+
+    Menu menu = menuService.getMenuById(request.getId());
+    if (menu == null) {
+      return Result.error("MENU_NOT_FOUND", "菜单不存在");
+    }
+
+    return Result.success(menu);
   }
 
   // 获取当前登录用户的完整信息（包含用户信息和菜单）

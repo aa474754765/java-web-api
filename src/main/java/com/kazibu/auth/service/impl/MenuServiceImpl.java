@@ -60,21 +60,13 @@ public class MenuServiceImpl implements MenuService {
   }
 
   @Override
-  public List<Menu> getAllMenusWithChildren() {
-    List<Menu> allMenus = menuRepository.findAll();
-    Map<Long, Menu> menuMap = allMenus.stream().collect(Collectors.toMap(Menu::getId, m -> m));
-    List<Menu> roots = new ArrayList<>();
-    for (Menu menu : allMenus) {
-      if (menu.getParentId() == null) {
-        roots.add(menu);
-      } else {
-        Menu parent = menuMap.get(menu.getParentId());
-        if (parent != null) {
-          parent.getChildren().add(menu);
-        }
-      }
-    }
-    return roots;
+  public List<Menu> getAllMenus() {
+    return menuRepository.findAll();
+  }
+
+  @Override
+  public List<Menu> getMenusByConditions(Long parentId, String visible, String title) {
+    return menuRepository.findByConditions(parentId, visible, title);
   }
 
   @Override
