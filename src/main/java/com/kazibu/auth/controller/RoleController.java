@@ -2,8 +2,8 @@ package com.kazibu.auth.controller;
 
 import com.kazibu.auth.service.RoleService;
 import com.kazibu.auth.dto.RoleResponse;
+import com.kazibu.auth.security.RequiresPermission;
 import com.kazibu.auth.dto.RoleRequest;
-import com.kazibu.auth.dto.MenuInfo;
 import com.kazibu.system.entity.Result;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ public class RoleController {
 
   // 1. 查询所有角色（不包含菜单信息）
   @PostMapping("/list")
+  @RequiresPermission("system:role:list")
   public Result<List<RoleResponse>> getAllRoles(@RequestBody(required = false) RoleRequest request) {
     List<RoleResponse> roles;
     if (request == null) {
@@ -36,6 +37,7 @@ public class RoleController {
 
   // 2. 根据角色ID获取完整角色信息（包含菜单）
   @PostMapping("/get")
+  @RequiresPermission("system:role:edit")
   public Result<RoleResponse> getRoleById(@RequestBody RoleRequest request) {
     if (request.getId() == null) {
       return Result.error("INVALID_PARAM", "角色ID不能为空");
@@ -49,18 +51,9 @@ public class RoleController {
     return Result.success(role);
   }
 
-  // 3. 根据角色ID或名称获取菜单列表
-  @PostMapping("/get_role_menus")
-  public Result<List<MenuInfo>> getRoleMenus(@RequestBody RoleRequest request) {
-    if (request.getId() == null && (request.getName() == null || request.getName().trim().isEmpty())) {
-      return Result.error("INVALID_PARAM", "角色ID或角色名称不能为空");
-    }
-    List<MenuInfo> menus = roleService.getRoleMenusByIdOrName(request.getId(), request.getName());
-    return Result.success(menus);
-  }
-
-  // 4. 创建角色
+  // 3. 创建角色
   @PostMapping("/create")
+  @RequiresPermission("system:role:add")
   public Result<String> createRole(@RequestBody RoleRequest request) {
     if (request.getName() == null || request.getName().trim().isEmpty()) {
       return Result.error("INVALID_PARAM", "角色名称不能为空");
@@ -77,8 +70,9 @@ public class RoleController {
     }
   }
 
-  // 5. 编辑角色
+  // 4. 编辑角色
   @PostMapping("/update")
+  @RequiresPermission("system:role:edit")
   public Result<String> updateRole(@RequestBody RoleRequest request) {
     if (request.getId() == null) {
       return Result.error("INVALID_PARAM", "角色ID不能为空");
@@ -98,8 +92,9 @@ public class RoleController {
     }
   }
 
-  // 6. 删除角色
+  // 5. 删除角色
   @PostMapping("/delete")
+  @RequiresPermission("system:role:delete")
   public Result<String> deleteRole(@RequestBody RoleRequest request) {
     if (request.getId() == null) {
       return Result.error("INVALID_PARAM", "角色ID不能为空");

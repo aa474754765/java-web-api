@@ -4,6 +4,7 @@ import com.kazibu.auth.dto.AuthDto;
 import com.kazibu.auth.dto.UserInfoDto;
 import com.kazibu.auth.dto.RouterInfo;
 import com.kazibu.auth.security.JwtUtil;
+import com.kazibu.auth.security.RequiresPermission;
 import com.kazibu.auth.service.MenuService;
 import com.kazibu.system.entity.Result;
 import com.kazibu.system.enumData.ErrorCode;
@@ -83,6 +84,7 @@ public class AuthController {
   }
 
   @PostMapping("/resetPassword")
+  @RequiresPermission("system:role:resetPassword")
   public Result<String> resetPassword(@RequestBody AuthDto.ResetPasswordRequest request) {
     // 验证请求参数
     if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {

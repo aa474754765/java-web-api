@@ -21,15 +21,12 @@ public interface RoleService {
   // 2. 根据角色ID获取菜单列表
   List<MenuInfo> getRoleMenus(Long roleId);
 
-  // 2.1. 根据角色ID或名称获取菜单列表
-  List<MenuInfo> getRoleMenusByIdOrName(Long roleId, String roleName);
-
-  // 3. 创建角色
+  // 2. 创建角色
   boolean createRole(RoleRequest request);
 
-  // 4. 编辑角色
+  // 3. 编辑角色
   boolean updateRole(RoleRequest request);
 
-  // 5. 删除角色
+  // 4. 删除角色
   boolean deleteRole(RoleRequest request);
 }

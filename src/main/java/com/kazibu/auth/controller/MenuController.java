@@ -4,6 +4,7 @@ import com.kazibu.auth.entity.Menu;
 import com.kazibu.auth.service.MenuService;
 import com.kazibu.auth.dto.MenuDto;
 import com.kazibu.auth.dto.MenuTreeSelect;
+import com.kazibu.auth.security.RequiresPermission;
 import com.kazibu.system.entity.Result;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class MenuController {
   private MenuService menuService;
 
   @PostMapping("/add")
+  @RequiresPermission("system:menu:add")
   public Result<Menu> addMenu(@RequestBody MenuDto.MenuRequest request) {
     Menu menu = new Menu();
     menu.setName(request.getName());
@@ -44,6 +46,7 @@ public class MenuController {
   }
 
   @PostMapping("/edit")
+  @RequiresPermission("system:menu:edit")
   public Result<Menu> updateMenu(@RequestBody MenuDto.MenuRequest request) {
     Menu existingMenu = menuService.getMenuById(request.getId());
     if (existingMenu == null) {
@@ -78,12 +81,14 @@ public class MenuController {
   }
 
   @PostMapping("/delete")
+  @RequiresPermission("system:menu:delete")
   public Result<String> deleteMenu(@RequestBody MenuDto.MenuRequest request) {
     menuService.deleteMenu(request.getId());
     return Result.success("删除成功");
   }
 
   @PostMapping("/list")
+  @RequiresPermission("system:menu:list")
   public Result<List<Menu>> getMenusByParentId(@RequestBody MenuDto.MenuQuery query) {
     List<Menu> menus;
 
@@ -107,6 +112,7 @@ public class MenuController {
   }
 
   @PostMapping("/get")
+  @RequiresPermission("system:menu:edit")
   public Result<Menu> getMenuById(@RequestBody MenuDto.MenuRequest request) {
     if (request.getId() == null) {
       return Result.error("INVALID_PARAM", "菜单ID不能为空");

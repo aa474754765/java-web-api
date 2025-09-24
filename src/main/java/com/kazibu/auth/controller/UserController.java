@@ -8,6 +8,7 @@ import com.kazibu.auth.entity.Role;
 import com.kazibu.auth.entity.UserRole;
 import com.kazibu.auth.repository.RoleRepository;
 import com.kazibu.auth.repository.UserRoleRepository;
+import com.kazibu.auth.security.RequiresPermission;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class UserController {
   private RoleRepository roleRepository;
 
   @PostMapping("/edit")
+  @RequiresPermission("system:role:edit")
   public Result<UserDto.UserResponse> updateUser(@RequestBody UserDto.UserRequest request) {
     User existingUser = userService.getUserById(request.getId());
     if (existingUser == null) {
@@ -63,6 +65,7 @@ public class UserController {
   }
 
   @PostMapping("/delete")
+  @RequiresPermission("system:role:delete")
   public Result<String> deleteUser(@RequestBody UserDto.UserRequest request) {
     try {
       userService.deleteUser(request.getId());
@@ -73,6 +76,7 @@ public class UserController {
   }
 
   @PostMapping("/list")
+  @RequiresPermission("system:role:list")
   public Result<List<UserDto.UserResponse>> getUsers(@RequestBody UserDto.UserQuery query) {
     List<UserDto.UserResponse> users;
     if (query == null) {
