@@ -11,6 +11,8 @@ import com.kazibu.auth.repository.RoleMenuRepository;
 import com.kazibu.auth.service.MenuService;
 import com.kazibu.auth.dto.UserInfoDto;
 import com.kazibu.auth.dto.MenuTreeSelect;
+import com.kazibu.auth.dto.RouterInfo;
+import com.kazibu.auth.dto.RouterMeta;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -142,9 +144,13 @@ public class MenuServiceImpl implements MenuService {
         .collect(Collectors.toList());
     userInfo.setRoles(roles);
 
-    // 4. 获取用户菜单
+    // 4. 获取用户权限
     List<Menu> userMenus = getCurrentUserMenus(username);
-    userInfo.setMenus(userMenus);
+    List<String> perms = userMenus.stream()
+        .map(Menu::getPerms)
+        .filter(perm -> perm != null && !perm.trim().isEmpty())
+        .collect(Collectors.toList());
+    userInfo.setPerms(perms);
 
     return userInfo;
   }
@@ -191,5 +197,112 @@ public class MenuServiceImpl implements MenuService {
     }
 
     return treeList;
+  }
+
+  @Override
+  public List<RouterInfo> getUserRouters(String username) {
+    // 获取用户的所有菜单
+    List<Menu> userMenus = getCurrentUserMenus(username);
+
+    // 过滤掉menuType为F的菜单
+    userMenus = userMenus.stream()
+        .filter(menu -> !"F".equals(menu.getMenuType()))
+        .collect(Collectors.toList());
+
+    // 按排序字段排序
+    userMenus.sort(Comparator.comparing(Menu::getSort, Comparator.nullsLast(Comparator.naturalOrder())));
+
+    // 构建路由树状结构
+    return buildRouterTree(userMenus, null);
+  }
+
+  /**
+   * 递归构建路由树
+   * 
+   * @param allMenus 所有菜单列表
+   * @param parentId 父菜单ID，null表示根菜单
+   * @return 路由树列表
+   */
+  private List<RouterInfo> buildRouterTree(List<Menu> allMenus, Long parentId) {
+    List<RouterInfo> routerList = new ArrayList<>();
+
+    for (Menu menu : allMenus) {
+      Long currentParentId = menu.getParentId();
+
+      // 如果当前菜单的父ID与传入的parentId匹配
+      if (Objects.equals(currentParentId, parentId)) {
+        RouterInfo routerInfo = convertMenuToRouter(menu);
+
+        // 递归查找子菜单
+        List<RouterInfo> children = buildRouterTree(allMenus, menu.getId());
+        routerInfo.setChildren(children);
+
+        // 如果有子菜单，设置alwaysShow为true
+        if (!children.isEmpty()) {
+          routerInfo.setAlwaysShow(true);
+        }
+
+        routerList.add(routerInfo);
+      }
+    }
+
+    return routerList;
+  }
+
+  /**
+   * 将Menu实体转换为RouterInfo
+   */
+  private RouterInfo convertMenuToRouter(Menu menu) {
+    RouterInfo routerInfo = new RouterInfo();
+
+    // 设置name：如果为空，取path的值首字母大写
+    String name = menu.getName();
+    if (name == null || name.trim().isEmpty()) {
+      String path = menu.getPath();
+      if (path != null && !path.trim().isEmpty()) {
+        name = capitalizeFirstLetter(path.replaceAll("[^a-zA-Z0-9]", ""));
+      } else {
+        name = "Menu" + menu.getId();
+      }
+    }
+    routerInfo.setName(name);
+
+    // 设置path：menuType为M时，如果前面没有斜杠，加上斜杠
+    String path = menu.getPath();
+    if ("M".equals(menu.getMenuType()) && path != null && !path.startsWith("/")) {
+      path = "/" + path;
+    }
+    routerInfo.setPath(path);
+
+    // 设置hidden：visible字段，1为false，0为true
+    routerInfo.setHidden(!"1".equals(menu.getVisible()));
+
+    // 设置component：menuType为M时，component的值为Layout
+    String component = menu.getComponent();
+    if ("M".equals(menu.getMenuType())) {
+      component = "Layout";
+    }
+    routerInfo.setComponent(component);
+
+    // 设置meta
+    RouterMeta meta = new RouterMeta();
+    meta.setTitle(menu.getTitle());
+    meta.setIcon(menu.getIcon());
+    // noCache为isCache字段，1为true，0为false
+    meta.setNoCache("1".equals(menu.getIsCache()));
+    meta.setLink(null); // link返回null
+    routerInfo.setMeta(meta);
+
+    return routerInfo;
+  }
+
+  /**
+   * 首字母大写
+   */
+  private String capitalizeFirstLetter(String str) {
+    if (str == null || str.isEmpty()) {
+      return str;
+    }
+    return str.substring(0, 1).toUpperCase() + str.substring(1);
   }
 }

@@ -1,6 +1,5 @@
 package com.kazibu.auth.dto;
 
-import com.kazibu.auth.entity.Menu;
 import java.util.List;
 
 // 用户信息响应类
@@ -13,7 +12,7 @@ public class UserInfoDto {
   private String createTime;
   private String updateTime;
   private List<String> roles;
-  private List<Menu> menus;
+  private List<String> perms;
 
   // getter和setter
   public Long getId() {
@@ -80,11 +79,11 @@ public class UserInfoDto {
     this.roles = roles;
   }
 
-  public List<Menu> getMenus() {
-    return menus;
+  public List<String> getPerms() {
+    return perms;
   }
 
-  public void setMenus(List<Menu> menus) {
-    this.menus = menus;
+  public void setPerms(List<String> perms) {
+    this.perms = perms;
   }
-} 
+}

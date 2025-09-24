@@ -4,12 +4,9 @@ import com.kazibu.auth.entity.Menu;
 import com.kazibu.auth.service.MenuService;
 import com.kazibu.auth.dto.MenuDto;
 import com.kazibu.auth.dto.MenuTreeSelect;
-import com.kazibu.auth.dto.UserInfoDto;
 import com.kazibu.system.entity.Result;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -121,23 +118,6 @@ public class MenuController {
     }
 
     return Result.success(menu);
-  }
-
-  // 获取当前登录用户的完整信息（包含用户信息和菜单）
-  @PostMapping("/getUserInfo")
-  public Result<UserInfoDto> getUserInfo() {
-    // 获取当前登录用户信息
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null || !authentication.isAuthenticated()) {
-      return Result.error("NOT_AUTHENTICATED", "用户未登录");
-    }
-
-    String username = authentication.getName();
-    UserInfoDto userInfo = menuService.getCurrentUserInfo(username);
-    if (userInfo == null) {
-      return Result.error("USER_NOT_FOUND", "用户不存在");
-    }
-    return Result.success(userInfo);
   }
 
   @PostMapping("/menuTreeselect")

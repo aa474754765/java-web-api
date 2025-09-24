@@ -1,7 +1,10 @@
 package com.kazibu.auth.controller;
 
 import com.kazibu.auth.dto.AuthDto;
+import com.kazibu.auth.dto.UserInfoDto;
+import com.kazibu.auth.dto.RouterInfo;
 import com.kazibu.auth.security.JwtUtil;
+import com.kazibu.auth.service.MenuService;
 import com.kazibu.system.entity.Result;
 import com.kazibu.system.enumData.ErrorCode;
 
@@ -30,6 +33,8 @@ public class AuthController {
   private JwtUtil jwtUtil;
   @Autowired
   private PasswordEncoder passwordEncoder;
+  @Autowired
+  private MenuService menuService;
 
   // 登陆接口
   @PostMapping("/login")
@@ -122,5 +127,36 @@ public class AuthController {
     } catch (Exception e) {
       return Result.error("LOGOUT_FAILED", "登出失败");
     }
+  }
+
+  // 获取当前登录用户的完整信息（包含用户信息和权限）
+  @PostMapping("/getUserInfo")
+  public Result<UserInfoDto> getUserInfo() {
+    // 获取当前登录用户信息
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !authentication.isAuthenticated()) {
+      return Result.error("NOT_AUTHENTICATED", "用户未登录");
+    }
+
+    String username = authentication.getName();
+    UserInfoDto userInfo = menuService.getCurrentUserInfo(username);
+    if (userInfo == null) {
+      return Result.error("USER_NOT_FOUND", "用户不存在");
+    }
+    return Result.success(userInfo);
+  }
+
+  // 获取当前用户的路由信息（树状结构）
+  @PostMapping("/getRouters")
+  public Result<List<RouterInfo>> getRouters() {
+    // 获取当前登录用户信息
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !authentication.isAuthenticated()) {
+      return Result.error("NOT_AUTHENTICATED", "用户未登录");
+    }
+
+    String username = authentication.getName();
+    List<RouterInfo> routers = menuService.getUserRouters(username);
+    return Result.success(routers);
   }
 }

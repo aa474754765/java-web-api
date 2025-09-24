@@ -2,6 +2,7 @@ package com.kazibu.auth.service;
 
 import com.kazibu.auth.entity.Menu;
 import com.kazibu.auth.dto.MenuTreeSelect;
+import com.kazibu.auth.dto.RouterInfo;
 import java.util.List;
 
 public interface MenuService {
@@ -28,4 +29,7 @@ public interface MenuService {
 
   // 获取菜单树状选择器数据
   List<MenuTreeSelect> getMenuTreeSelect();
+
+  // 获取用户路由信息（树状结构）
+  List<RouterInfo> getUserRouters(String username);
 }
