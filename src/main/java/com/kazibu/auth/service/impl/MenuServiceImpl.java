@@ -14,6 +14,7 @@ import com.kazibu.auth.dto.MenuTreeSelect;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -44,7 +45,11 @@ public class MenuServiceImpl implements MenuService {
   }
 
   @Override
+  @Transactional
   public void deleteMenu(Long id) {
+    // 先删除角色与菜单的绑定关系
+    roleMenuRepository.deleteByMenuId(id);
+    // 再删除菜单
     menuRepository.deleteById(id);
   }
 

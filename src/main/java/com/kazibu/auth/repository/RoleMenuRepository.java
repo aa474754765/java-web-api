@@ -14,4 +14,7 @@ public interface RoleMenuRepository extends JpaRepository<RoleMenu, Long> {
 
   // 根据角色ID删除角色菜单关联
   void deleteByRoleId(Long roleId);
+
+  // 根据菜单ID删除角色菜单关联
+  void deleteByMenuId(Long menuId);
 }

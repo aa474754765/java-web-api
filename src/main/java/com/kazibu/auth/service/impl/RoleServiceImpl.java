@@ -247,7 +247,11 @@ public class RoleServiceImpl implements RoleService {
     for (RoleMenu roleMenu : roleMenus) {
       Menu menu = roleMenu.getMenu();
       if (menu != null) {
-        menuIds.add(menu.getId());
+        // 双重检查：确保菜单确实存在
+        Menu existingMenu = menuRepository.findById(menu.getId()).orElse(null);
+        if (existingMenu != null) {
+          menuIds.add(menu.getId());
+        }
       }
     }
 
