@@ -34,7 +34,22 @@ public class RoleController {
     return Result.success(roles);
   }
 
-  // 2. 根据角色ID或名称获取菜单列表
+  // 2. 根据角色ID获取完整角色信息（包含菜单）
+  @PostMapping("/get")
+  public Result<RoleResponse> getRoleById(@RequestBody RoleRequest request) {
+    if (request.getId() == null) {
+      return Result.error("INVALID_PARAM", "角色ID不能为空");
+    }
+
+    RoleResponse role = roleService.getRoleById(request.getId());
+    if (role == null) {
+      return Result.error("ROLE_NOT_FOUND", "角色不存在");
+    }
+
+    return Result.success(role);
+  }
+
+  // 3. 根据角色ID或名称获取菜单列表
   @PostMapping("/get_role_menus")
   public Result<List<MenuInfo>> getRoleMenus(@RequestBody RoleRequest request) {
     if (request.getId() == null && (request.getName() == null || request.getName().trim().isEmpty())) {
@@ -44,7 +59,7 @@ public class RoleController {
     return Result.success(menus);
   }
 
-  // 3. 创建角色
+  // 4. 创建角色
   @PostMapping("/create")
   public Result<String> createRole(@RequestBody RoleRequest request) {
     if (request.getName() == null || request.getName().trim().isEmpty()) {
@@ -62,7 +77,7 @@ public class RoleController {
     }
   }
 
-  // 4. 编辑角色
+  // 5. 编辑角色
   @PostMapping("/update")
   public Result<String> updateRole(@RequestBody RoleRequest request) {
     if (request.getId() == null) {
@@ -83,7 +98,7 @@ public class RoleController {
     }
   }
 
-  // 5. 删除角色
+  // 6. 删除角色
   @PostMapping("/delete")
   public Result<String> deleteRole(@RequestBody RoleRequest request) {
     if (request.getId() == null) {

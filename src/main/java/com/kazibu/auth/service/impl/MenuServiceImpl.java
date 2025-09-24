@@ -10,6 +10,7 @@ import com.kazibu.auth.repository.UserRoleRepository;
 import com.kazibu.auth.repository.RoleMenuRepository;
 import com.kazibu.auth.service.MenuService;
 import com.kazibu.auth.dto.UserInfoDto;
+import com.kazibu.auth.dto.MenuTreeSelect;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -141,5 +142,49 @@ public class MenuServiceImpl implements MenuService {
     userInfo.setMenus(userMenus);
 
     return userInfo;
+  }
+
+  @Override
+  public List<MenuTreeSelect> getMenuTreeSelect() {
+    // 获取所有菜单
+    List<Menu> allMenus = menuRepository.findAll();
+
+    // 按排序字段排序
+    allMenus.sort(Comparator.comparing(Menu::getSort, Comparator.nullsLast(Comparator.naturalOrder())));
+
+    // 构建树状结构
+    return buildMenuTree(allMenus, null);
+  }
+
+  /**
+   * 递归构建菜单树
+   * 
+   * @param allMenus 所有菜单列表
+   * @param parentId 父菜单ID，null表示根菜单
+   * @return 菜单树列表
+   */
+  private List<MenuTreeSelect> buildMenuTree(List<Menu> allMenus, Long parentId) {
+    List<MenuTreeSelect> treeList = new ArrayList<>();
+
+    for (Menu menu : allMenus) {
+      Long currentParentId = menu.getParentId();
+
+      // 如果当前菜单的父ID与传入的parentId匹配
+      if (Objects.equals(currentParentId, parentId)) {
+        MenuTreeSelect treeSelect = new MenuTreeSelect();
+        treeSelect.setId(menu.getId());
+        treeSelect.setLabel(menu.getTitle());
+        // visible字段：1为true（启用），0为false（禁用）
+        treeSelect.setDisabled(!"1".equals(menu.getVisible()));
+
+        // 递归查找子菜单
+        List<MenuTreeSelect> children = buildMenuTree(allMenus, menu.getId());
+        treeSelect.setChildren(children);
+
+        treeList.add(treeSelect);
+      }
+    }
+
+    return treeList;
   }
 }

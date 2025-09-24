@@ -70,6 +70,15 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
+  public RoleResponse getRoleById(Long roleId) {
+    Role role = roleRepository.findById(roleId).orElse(null);
+    if (role == null) {
+      return null;
+    }
+    return convertToRoleResponse(role);
+  }
+
+  @Override
   public List<MenuInfo> getRoleMenus(Long roleId) {
     List<RoleMenu> roleMenus = roleMenuRepository.findAllByRoleId(roleId);
     List<MenuInfo> menuInfos = new ArrayList<>();
@@ -214,7 +223,7 @@ public class RoleServiceImpl implements RoleService {
     response.setRoleName(role.getRoleName());
     response.setCreateTime(role.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
     response.setUpdateTime(role.getUpdateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-    response.setMenus(new ArrayList<>()); // 空菜单列表
+    response.setMenuIds(new ArrayList<>()); // 空菜单ID列表
     return response;
   }
 
@@ -231,25 +240,18 @@ public class RoleServiceImpl implements RoleService {
     response.setCreateTime(role.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
     response.setUpdateTime(role.getUpdateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
-    // 获取角色的菜单列表
+    // 获取角色的菜单ID列表
     List<RoleMenu> roleMenus = roleMenuRepository.findAllByRoleId(role.getId());
-    List<MenuInfo> menuInfos = new ArrayList<>();
+    List<Long> menuIds = new ArrayList<>();
 
     for (RoleMenu roleMenu : roleMenus) {
       Menu menu = roleMenu.getMenu();
       if (menu != null) {
-        MenuInfo menuInfo = new MenuInfo();
-        menuInfo.setId(menu.getId());
-        menuInfo.setName(menu.getName());
-        menuInfo.setPath(menu.getPath());
-        menuInfo.setIcon(menu.getIcon());
-        menuInfo.setSort(menu.getSort());
-        menuInfo.setParentId(menu.getParentId());
-        menuInfos.add(menuInfo);
+        menuIds.add(menu.getId());
       }
     }
 
-    response.setMenus(menuInfos);
+    response.setMenuIds(menuIds);
     return response;
   }
 

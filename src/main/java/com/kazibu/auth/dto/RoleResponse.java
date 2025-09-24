@@ -11,7 +11,7 @@ public class RoleResponse {
   private String roleName;
   private String createTime;
   private String updateTime;
-  private List<MenuInfo> menus;
+  private List<Long> menuIds;
 
   // getter和setter
   public Long getId() {
@@ -70,11 +70,11 @@ public class RoleResponse {
     this.updateTime = updateTime;
   }
 
-  public List<MenuInfo> getMenus() {
-    return menus;
+  public List<Long> getMenuIds() {
+    return menuIds;
   }
 
-  public void setMenus(List<MenuInfo> menus) {
-    this.menus = menus;
+  public void setMenuIds(List<Long> menuIds) {
+    this.menuIds = menuIds;
   }
 }

@@ -3,6 +3,7 @@ package com.kazibu.auth.controller;
 import com.kazibu.auth.entity.Menu;
 import com.kazibu.auth.service.MenuService;
 import com.kazibu.auth.dto.MenuDto;
+import com.kazibu.auth.dto.MenuTreeSelect;
 import com.kazibu.auth.dto.UserInfoDto;
 import com.kazibu.system.entity.Result;
 
@@ -137,5 +138,11 @@ public class MenuController {
       return Result.error("USER_NOT_FOUND", "用户不存在");
     }
     return Result.success(userInfo);
+  }
+
+  @PostMapping("/menuTreeselect")
+  public Result<List<MenuTreeSelect>> getMenuTreeSelect() {
+    List<MenuTreeSelect> menuTree = menuService.getMenuTreeSelect();
+    return Result.success(menuTree);
   }
 }

@@ -1,6 +1,7 @@
 package com.kazibu.auth.service;
 
 import com.kazibu.auth.entity.Menu;
+import com.kazibu.auth.dto.MenuTreeSelect;
 import java.util.List;
 
 public interface MenuService {
@@ -24,4 +25,7 @@ public interface MenuService {
 
   // 获取当前登录用户的完整信息（包含用户信息和菜单）
   com.kazibu.auth.dto.UserInfoDto getCurrentUserInfo(String username);
+
+  // 获取菜单树状选择器数据
+  List<MenuTreeSelect> getMenuTreeSelect();
 }

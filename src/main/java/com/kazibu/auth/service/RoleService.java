@@ -1,6 +1,5 @@
 package com.kazibu.auth.service;
 
-import com.kazibu.auth.entity.Role;
 import com.kazibu.auth.dto.RoleResponse;
 import com.kazibu.auth.dto.RoleRequest;
 import com.kazibu.auth.dto.MenuInfo;
@@ -15,6 +14,9 @@ public interface RoleService {
 
   // 1.2. 查询所有角色（包含菜单信息）
   List<RoleResponse> getAllRolesWithMenus();
+
+  // 1.3. 根据角色ID获取完整角色信息（包含菜单）
+  RoleResponse getRoleById(Long roleId);
 
   // 2. 根据角色ID获取菜单列表
   List<MenuInfo> getRoleMenus(Long roleId);
