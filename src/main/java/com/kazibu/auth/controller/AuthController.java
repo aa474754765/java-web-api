@@ -84,7 +84,7 @@ public class AuthController {
   }
 
   @PostMapping("/resetPassword")
-  @RequiresPermission("system:role:resetPassword")
+  @RequiresPermission("system:user:resetPassword")
   public Result<String> resetPassword(@RequestBody AuthDto.ResetPasswordRequest request) {
     // 验证请求参数
     if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
