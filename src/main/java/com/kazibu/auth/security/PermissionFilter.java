@@ -60,10 +60,11 @@ public class PermissionFilter extends OncePerRequestFilter {
     // 获取当前请求的path
     String requestPath = request.getRequestURI();
 
-    // 检查白名单或swagger开头的路径，或者v3-docs开头的路径
+    // 检查白名单或swagger开头的路径，或者v3-docs开头的路径，或者uploads开头的路径
     if (WHITE_LIST.contains(requestPath)
         || requestPath.startsWith("/swagger")
-        || requestPath.startsWith("/v3/api-docs")) {
+        || requestPath.startsWith("/v3/api-docs")
+        || requestPath.startsWith("/uploads")) {
       filterChain.doFilter(request, response);
       return;
     }
