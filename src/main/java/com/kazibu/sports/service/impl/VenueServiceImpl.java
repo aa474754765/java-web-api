@@ -1,6 +1,7 @@
 package com.kazibu.sports.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.criteria.Predicate;
 import com.kazibu.sports.entity.Venue;
 import com.kazibu.sports.entity.SportsType;
+import com.kazibu.sports.dto.VenueDto;
 import com.kazibu.sports.repository.VenueRepository;
 import com.kazibu.sports.repository.SportsTypeRepository;
 import com.kazibu.sports.repository.VenueCourtRepository;
@@ -131,7 +133,7 @@ public class VenueServiceImpl implements VenueService {
   }
 
   @Override
-  public List<Venue> list(String name, Long sportsTypeId, String city, String contactType) {
+  public List<VenueDto.VenueListItem> list(String name, Long sportsTypeId, String city, String contactType) {
     // 使用 Specification 动态构建查询条件
     Specification<Venue> spec = (root, query, cb) -> {
       List<Predicate> predicates = new java.util.ArrayList<>();
@@ -161,6 +163,29 @@ public class VenueServiceImpl implements VenueService {
       return cb.and(predicates.toArray(new Predicate[0]));
     };
 
-    return repository.findAll(spec);
+    List<Venue> venues = repository.findAll(spec);
+
+    // 转成列表 DTO，避免直接暴露实体和懒加载字段
+    return venues.stream().map(this::toListItem).collect(Collectors.toList());
+  }
+
+  private VenueDto.VenueListItem toListItem(Venue venue) {
+    VenueDto.VenueListItem dto = new VenueDto.VenueListItem();
+    dto.setId(venue.getId());
+    dto.setName(venue.getName());
+    dto.setDescription(venue.getDescription());
+    if (venue.getSportsType() != null) {
+      dto.setSportsTypeId(venue.getSportsType().getId());
+      dto.setSportsTypeName(venue.getSportsType().getType());
+    }
+    dto.setCity(venue.getCity());
+    dto.setAddress(venue.getAddress());
+    dto.setLatitude(venue.getLatitude());
+    dto.setLongitude(venue.getLongitude());
+    dto.setContactType(venue.getContactType());
+    dto.setContactInfo(venue.getContactInfo());
+    dto.setRating(venue.getRating());
+    dto.setOrder(venue.getOrder());
+    return dto;
   }
 }

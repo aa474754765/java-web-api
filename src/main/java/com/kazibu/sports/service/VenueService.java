@@ -2,6 +2,7 @@ package com.kazibu.sports.service;
 
 import java.util.List;
 import com.kazibu.sports.entity.Venue;
+import com.kazibu.sports.dto.VenueDto;
 
 public interface VenueService {
   Venue create(Venue venue);
@@ -12,6 +13,6 @@ public interface VenueService {
 
   Venue get(Long id);
 
-  List<Venue> list(String name, Long sportsTypeId, String city, String contactType);
+  List<VenueDto.VenueListItem> list(String name, Long sportsTypeId, String city, String contactType);
 }
 

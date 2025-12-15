@@ -139,7 +139,8 @@ public class VenueDto {
     public VenueDetailResponse() {
     }
 
-    public VenueDetailResponse(Venue venue, List<VenuePricing> pricings, List<VenueCourt> courts, List<VenueImage> images) {
+    public VenueDetailResponse(Venue venue, List<VenuePricing> pricings, List<VenueCourt> courts,
+        List<VenueImage> images) {
       this.venue = venue;
       this.pricings = pricings;
       this.courts = courts;
@@ -176,6 +177,127 @@ public class VenueDto {
 
     public void setImages(List<VenueImage> images) {
       this.images = images;
+    }
+  }
+
+  // 场馆列表项（用于 /sports_venue/list 返回）
+  public static class VenueListItem {
+    private Long id;
+    private String name;
+    private String description;
+    private Long sportsTypeId;
+    private String sportsTypeName;
+    private String city;
+    private String address;
+    private Double latitude;
+    private Double longitude;
+    private String contactType;
+    private String contactInfo;
+    private Double rating;
+    private Integer order;
+
+    public Long getId() {
+      return id;
+    }
+
+    public void setId(Long id) {
+      this.id = id;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+
+    public String getDescription() {
+      return description;
+    }
+
+    public void setDescription(String description) {
+      this.description = description;
+    }
+
+    public Long getSportsTypeId() {
+      return sportsTypeId;
+    }
+
+    public void setSportsTypeId(Long sportsTypeId) {
+      this.sportsTypeId = sportsTypeId;
+    }
+
+    public String getSportsTypeName() {
+      return sportsTypeName;
+    }
+
+    public void setSportsTypeName(String sportsTypeName) {
+      this.sportsTypeName = sportsTypeName;
+    }
+
+    public String getCity() {
+      return city;
+    }
+
+    public void setCity(String city) {
+      this.city = city;
+    }
+
+    public String getAddress() {
+      return address;
+    }
+
+    public void setAddress(String address) {
+      this.address = address;
+    }
+
+    public Double getLatitude() {
+      return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+      this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+      return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+      this.longitude = longitude;
+    }
+
+    public String getContactType() {
+      return contactType;
+    }
+
+    public void setContactType(String contactType) {
+      this.contactType = contactType;
+    }
+
+    public String getContactInfo() {
+      return contactInfo;
+    }
+
+    public void setContactInfo(String contactInfo) {
+      this.contactInfo = contactInfo;
+    }
+
+    public Double getRating() {
+      return rating;
+    }
+
+    public void setRating(Double rating) {
+      this.rating = rating;
+    }
+
+    public Integer getOrder() {
+      return order;
+    }
+
+    public void setOrder(Integer order) {
+      this.order = order;
     }
   }
 }
