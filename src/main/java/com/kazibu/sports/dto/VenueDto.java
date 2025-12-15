@@ -195,6 +195,7 @@ public class VenueDto {
     private String contactInfo;
     private Double rating;
     private Integer order;
+    private String enabled;
 
     public Long getId() {
       return id;
@@ -298,6 +299,14 @@ public class VenueDto {
 
     public void setOrder(Integer order) {
       this.order = order;
+    }
+
+    public String getEnabled() {
+      return enabled;
+    }
+
+    public void setEnabled(String enabled) {
+      this.enabled = enabled;
     }
   }
 }

@@ -97,7 +97,8 @@ public class VenueController {
     Long sportsTypeId = req == null ? null : req.getSportsTypeId();
     String city = req == null ? null : req.getCity();
     String contactType = req == null ? null : req.getContactType();
-    return Result.success(service.list(name, sportsTypeId, city, contactType));
+    String enabled = req == null ? null : req.getEnabled();
+    return Result.success(service.list(name, sportsTypeId, city, contactType, enabled));
   }
 
   // DTO转Entity的辅助方法

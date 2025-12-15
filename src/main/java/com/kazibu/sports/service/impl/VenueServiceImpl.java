@@ -133,7 +133,8 @@ public class VenueServiceImpl implements VenueService {
   }
 
   @Override
-  public List<VenueDto.VenueListItem> list(String name, Long sportsTypeId, String city, String contactType) {
+  public List<VenueDto.VenueListItem> list(String name, Long sportsTypeId, String city, String contactType,
+      String enabled) {
     // 使用 Specification 动态构建查询条件
     Specification<Venue> spec = (root, query, cb) -> {
       List<Predicate> predicates = new java.util.ArrayList<>();
@@ -151,9 +152,9 @@ public class VenueServiceImpl implements VenueService {
       if (contactType != null && !contactType.trim().isEmpty()) {
         predicates.add(cb.equal(root.get("contactType"), contactType.trim()));
       }
-
-      // 只查询启用的场馆
-      predicates.add(cb.equal(root.get("enabled"), "1"));
+      if (enabled != null && !enabled.trim().isEmpty()) {
+        predicates.add(cb.equal(root.get("enabled"), enabled.trim()));
+      }
 
       // 按 order 字段升序排序
       if (query != null) {
@@ -186,6 +187,7 @@ public class VenueServiceImpl implements VenueService {
     dto.setContactInfo(venue.getContactInfo());
     dto.setRating(venue.getRating());
     dto.setOrder(venue.getOrder());
+    dto.setEnabled(venue.getEnabled());
     return dto;
   }
 }
