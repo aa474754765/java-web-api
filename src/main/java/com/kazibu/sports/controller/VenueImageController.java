@@ -20,7 +20,7 @@ public class VenueImageController {
   private VenueImageService service;
 
   @PostMapping("/upload")
-  @RequiresPermission("sports:venue:image:upload")
+  @RequiresPermission("sports:venue:image")
   @Operation(summary = "上传单张图片", description = "为指定场馆上传单张图片（Base64编码）")
   public Result<VenueImage> upload(@RequestBody VenueImageDto.VenueImageUploadRequest req) {
     try {
@@ -42,7 +42,7 @@ public class VenueImageController {
   }
 
   @PostMapping("/uploadBatch")
-  @RequiresPermission("sports:venue:image:upload")
+  @RequiresPermission("sports:venue:image")
   @Operation(summary = "批量上传图片", description = "为指定场馆批量上传多张图片（Base64编码）")
   public Result<List<VenueImage>> uploadBatch(@RequestBody VenueImageDto.VenueImageBatchUploadRequest req) {
     try {

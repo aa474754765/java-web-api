@@ -27,7 +27,7 @@ public class VenueCourtServiceImpl implements VenueCourtService {
         .orElseThrow(() -> new IllegalArgumentException("场馆不存在，ID: " + venueId));
 
     // 删除该场馆的所有现有场地
-    List<VenueCourt> existingCourts = repository.findByVenueIdOrderByOrderAsc(venueId);
+    List<VenueCourt> existingCourts = repository.findByVenueId(venueId);
     if (!existingCourts.isEmpty()) {
       repository.deleteAll(existingCourts);
     }
@@ -37,8 +37,9 @@ public class VenueCourtServiceImpl implements VenueCourtService {
       return new java.util.ArrayList<>();
     }
 
-    // 设置场馆关联
+    // 设置场馆关联，并清除所有 id（因为已经删除了所有记录，这些都应该作为新记录插入）
     for (VenueCourt court : courts) {
+      court.setId(null); // 清除 id，作为新记录插入
       court.setVenue(venue);
     }
 
@@ -47,7 +48,6 @@ public class VenueCourtServiceImpl implements VenueCourtService {
 
   @Override
   public List<VenueCourt> listByVenueId(Long venueId) {
-    return repository.findByVenueIdOrderByOrderAsc(venueId);
+    return repository.findByVenueId(venueId);
   }
 }
-

@@ -10,8 +10,6 @@ public class VenueCourtDto {
     private String name; // 场地名称
     private String type; // 场地类型：室内场、室外场等
     private String description; // 描述
-    private Integer order;
-    private String enabled;
 
     public Long getId() {
       return id;
@@ -43,22 +41,6 @@ public class VenueCourtDto {
 
     public void setDescription(String description) {
       this.description = description;
-    }
-
-    public Integer getOrder() {
-      return order;
-    }
-
-    public void setOrder(Integer order) {
-      this.order = order;
-    }
-
-    public String getEnabled() {
-      return enabled;
-    }
-
-    public void setEnabled(String enabled) {
-      this.enabled = enabled;
     }
   }
 

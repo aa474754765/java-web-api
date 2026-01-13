@@ -69,13 +69,6 @@ public class VenueCourtController {
     if (req.getDescription() != null) {
       court.setDescription(req.getDescription());
     }
-    if (req.getOrder() != null) {
-      court.setOrder(req.getOrder());
-    }
-    if (req.getEnabled() != null) {
-      court.setEnabled(req.getEnabled());
-    }
     return court;
   }
 }
-

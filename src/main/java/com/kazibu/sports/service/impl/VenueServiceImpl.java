@@ -105,9 +105,10 @@ public class VenueServiceImpl implements VenueService {
   @Override
   @Transactional
   public void delete(Long id) {
-    // 先删除关联的场地
+    // 1. 先删除关联的场地（court）
     venueCourtRepository.deleteAllByVenueId(id);
-    // 先删除关联的图片（包括文件）
+
+    // 2. 删除关联的图片（image），包括物理文件
     List<com.kazibu.sports.entity.VenueImage> images = venueImageRepository.findByVenueIdOrderByOrderAsc(id);
     for (com.kazibu.sports.entity.VenueImage image : images) {
       try {
@@ -121,9 +122,11 @@ public class VenueServiceImpl implements VenueService {
       }
     }
     venueImageRepository.deleteAllByVenueId(id);
-    // 删除关联的收费标准
+
+    // 3. 删除关联的收费标准（pricing）
     venuePricingRepository.deleteAllByVenueId(id);
-    // 最后删除场馆
+
+    // 4. 最后删除场馆本身
     repository.deleteById(id);
   }
 

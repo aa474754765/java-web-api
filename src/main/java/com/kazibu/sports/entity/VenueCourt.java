@@ -40,12 +40,6 @@ public class VenueCourt {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime updateTime;
 
-  @Column(name = "sort_order")
-  private Integer order = 1;
-
-  @Column(name = "enabled", length = 1)
-  private String enabled = "1";
-
   @PrePersist
   protected void onCreate() {
     LocalDateTime now = LocalDateTime.now();
@@ -54,24 +48,12 @@ public class VenueCourt {
     String username = resolveCurrentUsername();
     this.createdBy = username;
     this.updateBy = username;
-    if (this.order == null) {
-      this.order = 1;
-    }
-    if (this.enabled == null || this.enabled.trim().isEmpty()) {
-      this.enabled = "1";
-    }
   }
 
   @PreUpdate
   protected void onUpdate() {
     this.updateTime = LocalDateTime.now();
     this.updateBy = resolveCurrentUsername();
-    if (this.order == null) {
-      this.order = 1;
-    }
-    if (this.enabled == null || this.enabled.trim().isEmpty()) {
-      this.enabled = "1";
-    }
   }
 
   private String resolveCurrentUsername() {
@@ -156,22 +138,6 @@ public class VenueCourt {
 
   public void setUpdateTime(LocalDateTime updateTime) {
     this.updateTime = updateTime;
-  }
-
-  public Integer getOrder() {
-    return order;
-  }
-
-  public void setOrder(Integer order) {
-    this.order = order;
-  }
-
-  public String getEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(String enabled) {
-    this.enabled = enabled;
   }
 }
 
