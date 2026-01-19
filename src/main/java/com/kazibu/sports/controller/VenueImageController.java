@@ -73,7 +73,7 @@ public class VenueImageController {
   }
 
   @PostMapping("/delete")
-  @RequiresPermission("sports:venue:image:delete")
+  @RequiresPermission("sports:venue:image")
   @Operation(summary = "删除图片", description = "删除指定图片（同时删除文件）")
   public Result<String> delete(@RequestBody VenueImageDto.VenueImageDeleteRequest req) {
     try {

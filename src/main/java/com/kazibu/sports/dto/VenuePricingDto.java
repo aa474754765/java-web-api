@@ -15,8 +15,6 @@ public class VenuePricingDto {
     private Double price; // 价格
     private String unit; // 计价单位，如"小时"、"场次"、"天"
     private String description; // 备注说明
-    private Integer order;
-    private String enabled;
 
     public Long getId() {
       return id;
@@ -88,22 +86,6 @@ public class VenuePricingDto {
 
     public void setDescription(String description) {
       this.description = description;
-    }
-
-    public Integer getOrder() {
-      return order;
-    }
-
-    public void setOrder(Integer order) {
-      this.order = order;
-    }
-
-    public String getEnabled() {
-      return enabled;
-    }
-
-    public void setEnabled(String enabled) {
-      this.enabled = enabled;
     }
   }
 

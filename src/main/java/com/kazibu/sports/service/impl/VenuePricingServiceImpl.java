@@ -27,7 +27,7 @@ public class VenuePricingServiceImpl implements VenuePricingService {
         .orElseThrow(() -> new IllegalArgumentException("场馆不存在，ID: " + venueId));
 
     // 删除该场馆的所有现有收费标准
-    List<VenuePricing> existingPricings = repository.findByVenueIdOrderByOrderAsc(venueId);
+    List<VenuePricing> existingPricings = repository.findByVenueId(venueId);
     if (!existingPricings.isEmpty()) {
       repository.deleteAll(existingPricings);
     }
@@ -39,6 +39,8 @@ public class VenuePricingServiceImpl implements VenuePricingService {
 
     // 验证并保存新的收费标准
     for (VenuePricing venuePricing : venuePricings) {
+      // 清除 id（因为已经删除了所有记录，这些都应该作为新记录插入）
+      venuePricing.setId(null);
       // 设置场馆
       venuePricing.setVenue(venue);
 
@@ -53,6 +55,6 @@ public class VenuePricingServiceImpl implements VenuePricingService {
 
   @Override
   public List<VenuePricing> listByVenueId(Long venueId) {
-    return repository.findByVenueIdOrderByOrderAsc(venueId);
+    return repository.findByVenueId(venueId);
   }
 }

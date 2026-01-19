@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface VenuePricingRepository extends JpaRepository<VenuePricing, Long>, JpaSpecificationExecutor<VenuePricing> {
-  List<VenuePricing> findByVenueIdOrderByOrderAsc(Long venueId);
+  List<VenuePricing> findByVenueId(Long venueId);
   void deleteAllByVenueId(Long venueId);
 }
 

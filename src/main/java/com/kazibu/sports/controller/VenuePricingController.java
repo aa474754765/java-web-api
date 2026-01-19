@@ -25,7 +25,7 @@ public class VenuePricingController {
   private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
   @PostMapping("/edit")
-  @RequiresPermission("sports:venue:edit")
+  @RequiresPermission("sports:venue:price")
   @Operation(summary = "编辑收费标准", description = "替换场馆的所有收费标准（先删除该场馆的所有现有收费标准，再保存新的列表）。如果items为空数组，则删除该场馆的所有收费标准")
   public Result<List<VenuePricing>> edit(@RequestBody VenuePricingDto.VenuePricingBatchRequest req) {
     try {
@@ -97,12 +97,6 @@ public class VenuePricingController {
     }
     if (req.getDescription() != null) {
       venuePricing.setDescription(req.getDescription());
-    }
-    if (req.getOrder() != null) {
-      venuePricing.setOrder(req.getOrder());
-    }
-    if (req.getEnabled() != null) {
-      venuePricing.setEnabled(req.getEnabled());
     }
     return venuePricing;
   }
