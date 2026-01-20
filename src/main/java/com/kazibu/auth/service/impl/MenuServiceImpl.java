@@ -8,6 +8,8 @@ import com.kazibu.auth.repository.MenuRepository;
 import com.kazibu.auth.repository.UserRepository;
 import com.kazibu.auth.repository.UserRoleRepository;
 import com.kazibu.auth.repository.RoleMenuRepository;
+import com.kazibu.auth.repository.RoleRepository;
+import com.kazibu.auth.entity.Role;
 import com.kazibu.auth.service.MenuService;
 import com.kazibu.auth.dto.UserInfoDto;
 import com.kazibu.auth.dto.MenuTreeSelect;
@@ -36,9 +38,30 @@ public class MenuServiceImpl implements MenuService {
   @Autowired
   private RoleMenuRepository roleMenuRepository;
 
+  @Autowired
+  private RoleRepository roleRepository;
+
   @Override
+  @Transactional
   public Menu addMenu(Menu menu) {
-    return menuRepository.save(menu);
+    // 保存菜单
+    Menu savedMenu = menuRepository.save(menu);
+
+    // 为admin角色自动分配菜单权限
+    roleRepository.findByName("admin").ifPresent(adminRole -> {
+      // 检查是否已经存在该关联，避免重复
+      boolean exists = roleMenuRepository.findAllByRoleId(adminRole.getId()).stream()
+          .anyMatch(rm -> rm.getMenu() != null && rm.getMenu().getId().equals(savedMenu.getId()));
+
+      if (!exists) {
+        RoleMenu roleMenu = new RoleMenu();
+        roleMenu.setRole(adminRole);
+        roleMenu.setMenu(savedMenu);
+        roleMenuRepository.save(roleMenu);
+      }
+    });
+
+    return savedMenu;
   }
 
   @Override
