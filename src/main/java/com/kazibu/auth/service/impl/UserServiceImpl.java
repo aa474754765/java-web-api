@@ -145,6 +145,32 @@ public class UserServiceImpl implements UserService {
     return convertToUserResponse(user);
   }
 
+  @Override
+  public boolean resetPassword(String username, String currentPassword, String newEncodedPassword) {
+    if (username == null || username.trim().isEmpty()) {
+      return false;
+    }
+    if (currentPassword == null || currentPassword.trim().isEmpty()) {
+      return false;
+    }
+    
+    // 查找用户
+    User user = userRepository.findByUsername(username.trim()).orElse(null);
+    if (user == null) {
+      return false;
+    }
+    
+    // 验证当前密码是否匹配
+    if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+      return false;
+    }
+    
+    // 密码匹配，重置为新密码
+    user.setPassword(newEncodedPassword);
+    userRepository.save(user);
+    return true;
+  }
+
   private UserDto.UserResponse convertToUserResponse(User user) {
     UserDto.UserResponse response = new UserDto.UserResponse();
     response.setId(user.getId());

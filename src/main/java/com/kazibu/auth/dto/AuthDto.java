@@ -68,7 +68,8 @@ public class AuthDto {
   // 重置密码请求类
   public static class ResetPasswordRequest {
     private String username; // 用户名
-    private String password; // 新密码
+    private String currentPassword; // 当前密码
+    private String newPassword; // 新密码
 
     // getter和setter
     public String getUsername() {
@@ -79,12 +80,20 @@ public class AuthDto {
       this.username = username;
     }
 
-    public String getPassword() {
-      return password;
+    public String getCurrentPassword() {
+      return currentPassword;
     }
 
-    public void setPassword(String password) {
-      this.password = password;
+    public void setCurrentPassword(String currentPassword) {
+      this.currentPassword = currentPassword;
+    }
+
+    public String getNewPassword() {
+      return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+      this.newPassword = newPassword;
     }
   }
 }

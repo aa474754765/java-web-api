@@ -26,4 +26,6 @@ public interface UserService {
       String phoneNumber, Boolean enabled);
 
   com.kazibu.auth.dto.UserDto.UserResponse convertUserToResponse(User user);
+
+  boolean resetPassword(String username, String currentPassword, String newEncodedPassword);
 }

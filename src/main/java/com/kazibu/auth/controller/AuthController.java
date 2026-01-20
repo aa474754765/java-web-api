@@ -4,8 +4,8 @@ import com.kazibu.auth.dto.AuthDto;
 import com.kazibu.auth.dto.UserInfoDto;
 import com.kazibu.auth.dto.RouterInfo;
 import com.kazibu.auth.security.JwtUtil;
-import com.kazibu.auth.security.RequiresPermission;
 import com.kazibu.auth.service.MenuService;
+import com.kazibu.auth.service.UserService;
 import com.kazibu.system.entity.Result;
 import com.kazibu.system.enumData.ErrorCode;
 
@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,8 @@ public class AuthController {
   private PasswordEncoder passwordEncoder;
   @Autowired
   private MenuService menuService;
+  @Autowired
+  private UserService userService;
 
   // 登陆接口
   @PostMapping("/login")
@@ -84,26 +87,29 @@ public class AuthController {
   }
 
   @PostMapping("/resetPassword")
-  @RequiresPermission("system:user:resetPassword")
+  @Operation(summary = "重置密码", description = "验证用户名和当前密码后重置为新密码")
   public Result<String> resetPassword(@RequestBody AuthDto.ResetPasswordRequest request) {
     // 验证请求参数
     if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
       return Result.error("INVALID_REQUEST", "用户名不能为空");
     }
-
-    if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
-      return Result.error("INVALID_REQUEST", "密码不能为空");
+    if (request.getCurrentPassword() == null || request.getCurrentPassword().trim().isEmpty()) {
+      return Result.error("INVALID_REQUEST", "当前密码不能为空");
+    }
+    if (request.getNewPassword() == null || request.getNewPassword().trim().isEmpty()) {
+      return Result.error("INVALID_REQUEST", "新密码不能为空");
     }
 
-    // 直接尝试重置密码，让服务层处理用户存在性检查
-    boolean success = userDetailsService.resetPassword(
-        request.getUsername(),
-        passwordEncoder.encode(request.getPassword()));
+    // 重置密码（验证用户名和当前密码是否匹配）
+    boolean success = userService.resetPassword(
+        request.getUsername().trim(),
+        request.getCurrentPassword(),
+        passwordEncoder.encode(request.getNewPassword()));
 
     if (success) {
       return Result.success("密码重置成功！");
     } else {
-      return Result.error("USER_NOT_FOUND", "用户不存在");
+      return Result.error("PASSWORD_ERROR", "用户名或当前密码错误");
     }
   }
 

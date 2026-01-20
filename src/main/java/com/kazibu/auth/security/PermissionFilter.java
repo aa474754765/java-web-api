@@ -36,6 +36,7 @@ public class PermissionFilter extends OncePerRequestFilter {
   private static final List<String> WHITE_LIST = List.of(
       "/login",
       "/register",
+      "/resetPassword",
       "/logout");
 
   // 添加缓存

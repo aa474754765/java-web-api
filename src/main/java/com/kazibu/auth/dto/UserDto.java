@@ -217,4 +217,35 @@ public class UserDto {
       this.roles = roles;
     }
   }
+
+  // 重置密码请求类
+  public static class ResetPasswordRequest {
+    private String username; // 用户名
+    private String currentPassword; // 当前密码
+    private String newPassword; // 新密码
+
+    public String getUsername() {
+      return username;
+    }
+
+    public void setUsername(String username) {
+      this.username = username;
+    }
+
+    public String getCurrentPassword() {
+      return currentPassword;
+    }
+
+    public void setCurrentPassword(String currentPassword) {
+      this.currentPassword = currentPassword;
+    }
+
+    public String getNewPassword() {
+      return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+      this.newPassword = newPassword;
+    }
+  }
 }
