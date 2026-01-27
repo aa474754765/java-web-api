@@ -28,6 +28,18 @@ public class User {
   @Column(name = "phone_number", length = 20)
   private String phoneNumber;
 
+  @Column(name = "wx_openid", length = 100)
+  private String wxOpenId; // 微信小程序OpenID
+
+  @Column(name = "wx_unionid", length = 100)
+  private String wxUnionId; // 微信UnionID（跨应用唯一标识）
+
+  @Column(name = "wx_nick_name", length = 100)
+  private String wxNickName; // 微信昵称
+
+  @Column(name = "wx_avatar_url", length = 500)
+  private String wxAvatarUrl; // 微信头像URL
+
   @Column(name = "create_time")
   private LocalDateTime createTime = LocalDateTime.now();
 
@@ -84,6 +96,38 @@ public class User {
 
   public void setPhoneNumber(String phoneNumber) {
     this.phoneNumber = phoneNumber;
+  }
+
+  public String getWxOpenId() {
+    return wxOpenId;
+  }
+
+  public void setWxOpenId(String wxOpenId) {
+    this.wxOpenId = wxOpenId;
+  }
+
+  public String getWxUnionId() {
+    return wxUnionId;
+  }
+
+  public void setWxUnionId(String wxUnionId) {
+    this.wxUnionId = wxUnionId;
+  }
+
+  public String getWxNickName() {
+    return wxNickName;
+  }
+
+  public void setWxNickName(String wxNickName) {
+    this.wxNickName = wxNickName;
+  }
+
+  public String getWxAvatarUrl() {
+    return wxAvatarUrl;
+  }
+
+  public void setWxAvatarUrl(String wxAvatarUrl) {
+    this.wxAvatarUrl = wxAvatarUrl;
   }
 
   public LocalDateTime getCreateTime() {

@@ -37,6 +37,7 @@ public class PermissionFilter extends OncePerRequestFilter {
       "/login",
       "/register",
       "/resetPassword",
+      "/wechatLogin",
       "/logout");
 
   // 添加缓存

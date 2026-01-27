@@ -96,4 +96,35 @@ public class AuthDto {
       this.newPassword = newPassword;
     }
   }
+
+  // 微信小程序登录请求类
+  public static class WeChatLoginRequest {
+    private String code; // 微信登录凭证code
+    private String nickName; // 微信昵称（可选）
+    private String avatarUrl; // 微信头像URL（可选）
+
+    public String getCode() {
+      return code;
+    }
+
+    public void setCode(String code) {
+      this.code = code;
+    }
+
+    public String getNickName() {
+      return nickName;
+    }
+
+    public void setNickName(String nickName) {
+      this.nickName = nickName;
+    }
+
+    public String getAvatarUrl() {
+      return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+      this.avatarUrl = avatarUrl;
+    }
+  }
 }

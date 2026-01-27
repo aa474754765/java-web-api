@@ -6,6 +6,9 @@ import com.kazibu.auth.dto.RouterInfo;
 import com.kazibu.auth.security.JwtUtil;
 import com.kazibu.auth.service.MenuService;
 import com.kazibu.auth.service.UserService;
+import com.kazibu.auth.service.WeChatService;
+import com.kazibu.auth.entity.User;
+import com.kazibu.auth.repository.UserRepository;
 import com.kazibu.system.entity.Result;
 import com.kazibu.system.enumData.ErrorCode;
 
@@ -39,6 +42,10 @@ public class AuthController {
   private MenuService menuService;
   @Autowired
   private UserService userService;
+  @Autowired
+  private WeChatService weChatService;
+  @Autowired
+  private UserRepository userRepository;
 
   // 登陆接口
   @PostMapping("/login")
@@ -84,6 +91,86 @@ public class AuthController {
         request.getPhoneNumber());
 
     return Result.success("用户注册成功！");
+  }
+
+  @PostMapping("/wechatLogin")
+  @Operation(summary = "微信小程序登录", description = "通过微信code登录，如果用户不存在则自动创建")
+  public Result<Object> wechatLogin(@RequestBody AuthDto.WeChatLoginRequest request) {
+    try {
+      // 验证code
+      if (request.getCode() == null || request.getCode().trim().isEmpty()) {
+        return Result.error("INVALID_REQUEST", "微信code不能为空");
+      }
+
+      // 调用微信API获取openid和session_key
+      Map<String, Object> wechatSession = weChatService.getWeChatSession(request.getCode().trim());
+      String openId = (String) wechatSession.get("openid");
+      String unionId = (String) wechatSession.get("unionid");
+
+      if (openId == null || openId.isEmpty()) {
+        return Result.error("WECHAT_ERROR", "获取微信用户信息失败");
+      }
+
+      // 查找或创建用户
+      User user = userRepository.findByWxOpenId(openId).orElse(null);
+      boolean isNewUser = false;
+
+      if (user == null) {
+        // 新用户，自动创建
+        isNewUser = true;
+        user = new User();
+        user.setWxOpenId(openId);
+        user.setWxUnionId(unionId);
+        // 生成唯一的用户名（使用wx_前缀 + openid，确保唯一性）
+        String baseUsername = "wx_" + openId;
+        // 如果用户名已存在，添加时间戳确保唯一
+        if (userRepository.existsByUsername(baseUsername)) {
+          baseUsername = baseUsername + "_" + System.currentTimeMillis();
+        }
+        user.setUsername(baseUsername);
+        // 设置一个随机密码（微信登录不需要密码）
+        user.setPassword(passwordEncoder.encode("WECHAT_USER_" + System.currentTimeMillis()));
+        user.setEnabled(true);
+        user = userRepository.save(user);
+      }
+
+      // 更新微信用户信息（昵称和头像）
+      if (request.getNickName() != null && !request.getNickName().trim().isEmpty()) {
+        user.setWxNickName(request.getNickName().trim());
+        user.setNickName(request.getNickName().trim());
+      }
+      if (request.getAvatarUrl() != null && !request.getAvatarUrl().trim().isEmpty()) {
+        user.setWxAvatarUrl(request.getAvatarUrl().trim());
+      }
+      if (unionId != null && !unionId.isEmpty()) {
+        user.setWxUnionId(unionId);
+      }
+      user = userRepository.save(user);
+
+      // 生成JWT token
+      UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+      String token = jwtUtil.generateToken(userDetails);
+
+      // 获取用户角色
+      List<String> roles = userDetailsService.getUserRolesByUserName(user.getUsername());
+
+      // 构建返回数据
+      Map<String, Object> data = new HashMap<>();
+      data.put("token", token);
+      data.put("roles", roles);
+      data.put("isNewUser", isNewUser);
+      data.put("user", Map.of(
+          "id", user.getId(),
+          "username", user.getUsername(),
+          "nickName", user.getNickName() != null ? user.getNickName() : "",
+          "avatarUrl", user.getWxAvatarUrl() != null ? user.getWxAvatarUrl() : ""));
+
+      return Result.success(data);
+    } catch (RuntimeException e) {
+      return Result.error("WECHAT_LOGIN_ERROR", e.getMessage());
+    } catch (Exception e) {
+      return Result.error("WECHAT_LOGIN_ERROR", "微信登录失败: " + e.getMessage());
+    }
   }
 
   @PostMapping("/resetPassword")

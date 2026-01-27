@@ -10,6 +10,8 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
   java.util.Optional<User> findByUsername(String username);
 
+  java.util.Optional<User> findByWxOpenId(String wxOpenId);
+
   // 检查用户名是否存在
   boolean existsByUsername(String username);
 
