@@ -36,6 +36,7 @@ public class SecurityConfig {
             "/resetPassword",
             "/wechatLogin",
             "/logout",
+            "/mobile/venue/list",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html",

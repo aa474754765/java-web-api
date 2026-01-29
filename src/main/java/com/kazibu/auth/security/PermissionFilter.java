@@ -38,7 +38,8 @@ public class PermissionFilter extends OncePerRequestFilter {
       "/register",
       "/resetPassword",
       "/wechatLogin",
-      "/logout");
+      "/logout",
+      "/mobile/venue/list");
 
   // 添加缓存
   private final ConcurrentHashMap<String, Set<String>> userPermissionsCache = new ConcurrentHashMap<>();
