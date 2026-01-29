@@ -29,6 +29,10 @@ import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.HashSet;
 import com.kazibu.auth.entity.Role;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import java.lang.reflect.Method;
 
 @Component
 public class PermissionFilter extends OncePerRequestFilter {
@@ -38,8 +42,10 @@ public class PermissionFilter extends OncePerRequestFilter {
       "/register",
       "/resetPassword",
       "/wechatLogin",
-      "/logout",
-      "/mobile/venue/list");
+      "/logout");
+
+  @Autowired(required = false)
+  private RequestMappingHandlerMapping handlerMapping;
 
   // 添加缓存
   private final ConcurrentHashMap<String, Set<String>> userPermissionsCache = new ConcurrentHashMap<>();
@@ -72,18 +78,32 @@ public class PermissionFilter extends OncePerRequestFilter {
       return;
     }
 
+    // 检查是否是公开访问路径（带 @PublicAccess 注解的接口）
+    Set<String> publicPaths = com.kazibu.auth.config.SecurityConfig.getPublicPaths();
+    if (!publicPaths.isEmpty()) {
+      for (String publicPath : publicPaths) {
+        // 精确匹配
+        if (requestPath.equals(publicPath)) {
+          filterChain.doFilter(request, response);
+          return;
+        }
+        // 前缀匹配（支持 /mobile/venue/list 匹配 /mobile/venue/list/**）
+        if (publicPath.endsWith("/**")) {
+          String basePath = publicPath.substring(0, publicPath.length() - 3);
+          if (requestPath.startsWith(basePath)) {
+            filterChain.doFilter(request, response);
+            return;
+          }
+        }
+      }
+    }
+
     try {
       // 获取当前登录用户
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-      // 添加调试信息
-      System.out.println("=== PermissionFilter Debug ===");
-      System.out.println("Request Path: " + requestPath);
-      System.out.println("Authentication: " + (authentication != null ? authentication.getName() : "null"));
-      System.out.println("Is Authenticated: " + (authentication != null ? authentication.isAuthenticated() : "false"));
 
       if (authentication == null || !authentication.isAuthenticated()) {
-        System.out.println("Sending 403 response for unauthenticated request");
         sendErrorResponse(response,
             Result.error(ErrorCode.NO_PERMISSION.getCode(),
                 "未认证，禁止访问接口: " + requestPath + "，请先登录获取token"));
@@ -177,9 +197,6 @@ public class PermissionFilter extends OncePerRequestFilter {
   }
 
   private void sendErrorResponse(HttpServletResponse response, Result<?> result) throws IOException {
-    System.out.println("=== sendErrorResponse Debug ===");
-    System.out.println("Result: " + result);
-
     // 重置响应
     response.reset();
 
@@ -202,18 +219,10 @@ public class PermissionFilter extends OncePerRequestFilter {
     com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
     String jsonResponse = objectMapper.writeValueAsString(result);
 
-    System.out.println("JSON Response: " + jsonResponse);
-    System.out.println("Response Status: " + response.getStatus());
-    System.out.println("Response Content-Type: " + response.getContentType());
-
     // 写入响应并刷新
     response.getWriter().write(jsonResponse);
     response.getWriter().flush();
-
-    // 确保响应完成
     response.getWriter().close();
-
-    System.out.println("Response sent successfully");
   }
 
   /**
@@ -232,5 +241,39 @@ public class PermissionFilter extends OncePerRequestFilter {
   public void clearAllCache() {
     userPermissionsCache.clear();
     userCache.clear();
+  }
+
+  /**
+   * 检查请求对应的方法或类是否有 @PublicAccess 注解
+   */
+  private boolean hasPublicAccessAnnotation(HttpServletRequest request) {
+    if (handlerMapping == null) {
+      return false;
+    }
+
+    try {
+      // 获取对应的 HandlerMethod
+      Object handler = handlerMapping.getHandler(request);
+      if (handler instanceof HandlerMethod) {
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Method method = handlerMethod.getMethod();
+        Class<?> controllerClass = handlerMethod.getBeanType();
+
+        // 检查方法上是否有 @PublicAccess 注解
+        if (method.isAnnotationPresent(PublicAccess.class)) {
+          return true;
+        }
+
+        // 检查类上是否有 @PublicAccess 注解
+        if (controllerClass.isAnnotationPresent(PublicAccess.class)) {
+          return true;
+        }
+      }
+    } catch (Exception e) {
+      // 如果获取 Handler 失败，忽略异常，继续后续的权限验证
+      // System.err.println("获取 Handler 失败: " + e.getMessage());
+    }
+
+    return false;
   }
 }
