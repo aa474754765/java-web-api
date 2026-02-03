@@ -43,6 +43,7 @@ public class VenueServiceImpl implements VenueService {
     List<VenueDto.VenueListItem> items = venuePage.getContent().stream()
         .map(v -> {
           VenueDto.VenueListItem item = new VenueDto.VenueListItem();
+          item.setId(v.getId());
           item.setName(v.getName());
           item.setAddress(v.getAddress());
           item.setRating(v.getRating());

@@ -6,10 +6,19 @@ public class VenueDto {
 
   // 场馆列表项（移动端简化版）
   public static class VenueListItem {
+    private Long id; // 场馆ID
     private String name; // 场馆名称
     private String address; // 场馆地址
     private Double rating; // 评分
     private String imageUrl; // 场馆图片（第一张）
+
+    public Long getId() {
+      return id;
+    }
+
+    public void setId(Long id) {
+      this.id = id;
+    }
 
     public String getName() {
       return name;
