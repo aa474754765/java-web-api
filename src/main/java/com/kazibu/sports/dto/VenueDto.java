@@ -14,7 +14,9 @@ public class VenueDto {
     private String name;
     private String description;
     private Long sportsTypeId; // 体育类型ID
-    private String city;
+    private String province; // 省
+    private String city; // 市
+    private String district; // 区
     private String address;
     private Double latitude;
     private Double longitude;
@@ -56,12 +58,28 @@ public class VenueDto {
       this.sportsTypeId = sportsTypeId;
     }
 
+    public String getProvince() {
+      return province;
+    }
+
+    public void setProvince(String province) {
+      this.province = province;
+    }
+
     public String getCity() {
       return city;
     }
 
     public void setCity(String city) {
       this.city = city;
+    }
+
+    public String getDistrict() {
+      return district;
+    }
+
+    public void setDistrict(String district) {
+      this.district = district;
     }
 
     public String getAddress() {
@@ -187,7 +205,9 @@ public class VenueDto {
     private String description;
     private Long sportsTypeId;
     private String sportsTypeName;
-    private String city;
+    private String province; // 省
+    private String city; // 市
+    private String district; // 区
     private String address;
     private Double latitude;
     private Double longitude;
@@ -237,12 +257,28 @@ public class VenueDto {
       this.sportsTypeName = sportsTypeName;
     }
 
+    public String getProvince() {
+      return province;
+    }
+
+    public void setProvince(String province) {
+      this.province = province;
+    }
+
     public String getCity() {
       return city;
     }
 
     public void setCity(String city) {
       this.city = city;
+    }
+
+    public String getDistrict() {
+      return district;
+    }
+
+    public void setDistrict(String district) {
+      this.district = district;
     }
 
     public String getAddress() {

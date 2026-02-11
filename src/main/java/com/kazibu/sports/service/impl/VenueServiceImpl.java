@@ -67,8 +67,14 @@ public class VenueServiceImpl implements VenueService {
           .orElseThrow(() -> new IllegalArgumentException("体育类型不存在"));
       existingVenue.setSportsType(sportsType);
     }
+    if (venue.getProvince() != null) {
+      existingVenue.setProvince(venue.getProvince());
+    }
     if (venue.getCity() != null) {
       existingVenue.setCity(venue.getCity());
+    }
+    if (venue.getDistrict() != null) {
+      existingVenue.setDistrict(venue.getDistrict());
     }
     if (venue.getAddress() != null) {
       existingVenue.setAddress(venue.getAddress());
@@ -136,7 +142,7 @@ public class VenueServiceImpl implements VenueService {
   }
 
   @Override
-  public List<VenueDto.VenueListItem> list(String name, Long sportsTypeId, String city, String contactType,
+  public List<VenueDto.VenueListItem> list(String name, Long sportsTypeId, String province, String contactType,
       String enabled) {
     // 使用 Specification 动态构建查询条件
     Specification<Venue> spec = (root, query, cb) -> {
@@ -149,8 +155,8 @@ public class VenueServiceImpl implements VenueService {
       if (sportsTypeId != null) {
         predicates.add(cb.equal(root.get("sportsType").get("id"), sportsTypeId));
       }
-      if (city != null && !city.trim().isEmpty()) {
-        predicates.add(cb.equal(root.get("city"), city.trim()));
+      if (province != null && !province.trim().isEmpty()) {
+        predicates.add(cb.equal(root.get("province"), province.trim()));
       }
       if (contactType != null && !contactType.trim().isEmpty()) {
         predicates.add(cb.equal(root.get("contactType"), contactType.trim()));
@@ -182,7 +188,9 @@ public class VenueServiceImpl implements VenueService {
       dto.setSportsTypeId(venue.getSportsType().getId());
       dto.setSportsTypeName(venue.getSportsType().getType());
     }
+    dto.setProvince(venue.getProvince());
     dto.setCity(venue.getCity());
+    dto.setDistrict(venue.getDistrict());
     dto.setAddress(venue.getAddress());
     dto.setLatitude(venue.getLatitude());
     dto.setLongitude(venue.getLongitude());

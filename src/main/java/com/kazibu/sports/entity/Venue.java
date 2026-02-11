@@ -25,8 +25,14 @@ public class Venue {
   @JoinColumn(name = "sports_type_id", nullable = false)
   private SportsType sportsType;
 
+  @Column(name = "province", length = 100)
+  private String province; // 省
+
   @Column(name = "city", length = 100)
-  private String city;
+  private String city; // 市
+
+  @Column(name = "district", length = 100)
+  private String district; // 区
 
   @Column(name = "address", length = 500)
   private String address;
@@ -144,12 +150,28 @@ public class Venue {
     this.sportsType = sportsType;
   }
 
+  public String getProvince() {
+    return province;
+  }
+
+  public void setProvince(String province) {
+    this.province = province;
+  }
+
   public String getCity() {
     return city;
   }
 
   public void setCity(String city) {
     this.city = city;
+  }
+
+  public String getDistrict() {
+    return district;
+  }
+
+  public void setDistrict(String district) {
+    this.district = district;
   }
 
   public String getAddress() {

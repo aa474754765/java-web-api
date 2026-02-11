@@ -95,10 +95,10 @@ public class VenueController {
   public Result<List<VenueDto.VenueListItem>> list(@RequestBody(required = false) VenueDto.VenueRequest req) {
     String name = req == null ? null : req.getName();
     Long sportsTypeId = req == null ? null : req.getSportsTypeId();
-    String city = req == null ? null : req.getCity();
+    String province = req == null ? null : req.getProvince();
     String contactType = req == null ? null : req.getContactType();
     String enabled = req == null ? null : req.getEnabled();
-    return Result.success(service.list(name, sportsTypeId, city, contactType, enabled));
+    return Result.success(service.list(name, sportsTypeId, province, contactType, enabled));
   }
 
   // DTO转Entity的辅助方法
@@ -118,8 +118,14 @@ public class VenueController {
       sportsType.setId(req.getSportsTypeId());
       venue.setSportsType(sportsType);
     }
+    if (req.getProvince() != null) {
+      venue.setProvince(req.getProvince());
+    }
     if (req.getCity() != null) {
       venue.setCity(req.getCity());
+    }
+    if (req.getDistrict() != null) {
+      venue.setDistrict(req.getDistrict());
     }
     if (req.getAddress() != null) {
       venue.setAddress(req.getAddress());
