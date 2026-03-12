@@ -11,4 +11,12 @@ public interface VenueService {
    * @return 分页的场馆列表
    */
   VenueDto.PageResponse<VenueDto.VenueListItem> getVenueList(int page, int size);
+
+  /**
+   * 查询场馆详情（移动端）
+   *
+   * @param id 场馆ID
+   * @return 场馆详情（包含收费标准、场地信息和图片列表）
+   */
+  VenueDto.VenueDetailResponse getVenueDetail(Long id);
 }

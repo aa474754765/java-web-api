@@ -1,8 +1,25 @@
 package com.kazibu.mobile.dto;
 
+import com.kazibu.sports.entity.Venue;
+import com.kazibu.sports.entity.VenueCourt;
+import com.kazibu.sports.entity.VenueImage;
+import com.kazibu.sports.entity.VenuePricing;
 import java.util.List;
 
 public class VenueDto {
+
+  // 场馆请求类（用于详情查询）
+  public static class VenueRequest {
+    private Long id;
+
+    public Long getId() {
+      return id;
+    }
+
+    public void setId(Long id) {
+      this.id = id;
+    }
+  }
 
   // 场馆列表项（移动端简化版）
   public static class VenueListItem {
@@ -121,6 +138,57 @@ public class VenueDto {
 
     public void setSize(Integer size) {
       this.size = size;
+    }
+  }
+
+  // 场馆详情响应类（包含收费标准、场地信息和图片列表）
+  public static class VenueDetailResponse {
+    private Venue venue;
+    private List<VenuePricing> pricings;
+    private List<VenueCourt> courts;
+    private List<VenueImage> images;
+
+    public VenueDetailResponse() {
+    }
+
+    public VenueDetailResponse(Venue venue, List<VenuePricing> pricings, List<VenueCourt> courts,
+        List<VenueImage> images) {
+      this.venue = venue;
+      this.pricings = pricings;
+      this.courts = courts;
+      this.images = images;
+    }
+
+    public Venue getVenue() {
+      return venue;
+    }
+
+    public void setVenue(Venue venue) {
+      this.venue = venue;
+    }
+
+    public List<VenuePricing> getPricings() {
+      return pricings;
+    }
+
+    public void setPricings(List<VenuePricing> pricings) {
+      this.pricings = pricings;
+    }
+
+    public List<VenueCourt> getCourts() {
+      return courts;
+    }
+
+    public void setCourts(List<VenueCourt> courts) {
+      this.courts = courts;
+    }
+
+    public List<VenueImage> getImages() {
+      return images;
+    }
+
+    public void setImages(List<VenueImage> images) {
+      this.images = images;
     }
   }
 }

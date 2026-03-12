@@ -3,9 +3,13 @@ package com.kazibu.mobile.service.impl;
 import com.kazibu.mobile.dto.VenueDto;
 import com.kazibu.mobile.service.VenueService;
 import com.kazibu.sports.entity.Venue;
+import com.kazibu.sports.entity.VenueCourt;
 import com.kazibu.sports.entity.VenueImage;
+import com.kazibu.sports.entity.VenuePricing;
+import com.kazibu.sports.repository.VenueCourtRepository;
 import com.kazibu.sports.repository.VenueRepository;
 import com.kazibu.sports.repository.VenueImageRepository;
+import com.kazibu.sports.repository.VenuePricingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -25,6 +29,12 @@ public class VenueServiceImpl implements VenueService {
 
   @Autowired
   private VenueImageRepository venueImageRepository;
+
+  @Autowired
+  private VenuePricingRepository venuePricingRepository;
+
+  @Autowired
+  private VenueCourtRepository venueCourtRepository;
 
   @Value("${photo.upload.url-prefix:/uploads}")
   private String urlPrefix;
@@ -91,5 +101,19 @@ public class VenueServiceImpl implements VenueService {
     response.setTotalPages(venuePage.getTotalPages());
 
     return response;
+  }
+
+  @Override
+  public VenueDto.VenueDetailResponse getVenueDetail(Long id) {
+    Venue venue = venueRepository.findById(id).orElse(null);
+    if (venue == null) {
+      return null;
+    }
+
+    List<VenuePricing> pricings = venuePricingRepository.findByVenueId(id);
+    List<VenueCourt> courts = venueCourtRepository.findByVenueId(id);
+    List<VenueImage> images = venueImageRepository.findByVenueIdOrderByOrderAsc(id);
+
+    return new VenueDto.VenueDetailResponse(venue, pricings, courts, images);
   }
 }

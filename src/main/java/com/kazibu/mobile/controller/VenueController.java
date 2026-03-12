@@ -36,4 +36,22 @@ public class VenueController {
       return Result.error("QUERY_ERROR", "查询失败: " + e.getMessage());
     }
   }
+
+  @PostMapping("/venue/get")
+  @PublicAccess
+  @Operation(summary = "查询场馆详情", description = "根据场馆ID查询场馆详细信息，包含收费标准、场地信息和图片列表")
+  public Result<VenueDto.VenueDetailResponse> getVenueDetail(@RequestBody VenueDto.VenueRequest request) {
+    try {
+      if (request == null || request.getId() == null) {
+        return Result.error("VALIDATION_ERROR", "场馆ID不能为空");
+      }
+      VenueDto.VenueDetailResponse response = venueService.getVenueDetail(request.getId());
+      if (response == null) {
+        return Result.error("NOT_FOUND", "场馆不存在");
+      }
+      return Result.success(response);
+    } catch (Exception e) {
+      return Result.error("QUERY_ERROR", "查询失败: " + e.getMessage());
+    }
+  }
 }
