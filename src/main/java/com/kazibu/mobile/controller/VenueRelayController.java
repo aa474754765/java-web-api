@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@RestController("mobileVenueRelayController")
 @RequestMapping("/mobile")
 @Tag(name = "场馆接龙（移动端）", description = "移动端场馆接龙创建、查询、参与、取消接口")
 public class VenueRelayController {
