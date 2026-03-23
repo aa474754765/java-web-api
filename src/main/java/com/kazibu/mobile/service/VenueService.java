@@ -10,7 +10,7 @@ public interface VenueService {
    * @param size 每页大小
    * @return 分页的场馆列表
    */
-  VenueDto.PageResponse<VenueDto.VenueListItem> getVenueList(int page, int size);
+  VenueDto.PageResponse<VenueDto.VenueListItem> getVenueList(int page, int size, String cityCode);
 
   /**
    * 查询场馆详情（移动端）

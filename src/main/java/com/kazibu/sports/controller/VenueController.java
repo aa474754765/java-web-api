@@ -91,14 +91,15 @@ public class VenueController {
 
   @PostMapping("/list")
   @RequiresPermission("sports:venue:list")
-  @Operation(summary = "获取场馆列表", description = "获取场馆列表，支持按名称、体育类型、城市、联系类型筛选。参数为空时不使用该条件，可组合多个条件查询")
+  @Operation(summary = "获取场馆列表", description = "获取场馆列表，支持按名称、体育类型、省份、城市编码、联系类型筛选。参数为空时不使用该条件，可组合多个条件查询")
   public Result<List<VenueDto.VenueListItem>> list(@RequestBody(required = false) VenueDto.VenueRequest req) {
     String name = req == null ? null : req.getName();
     Long sportsTypeId = req == null ? null : req.getSportsTypeId();
     String province = req == null ? null : req.getProvince();
+    String cityCode = req == null ? null : req.getCityCode();
     String contactType = req == null ? null : req.getContactType();
     String enabled = req == null ? null : req.getEnabled();
-    return Result.success(service.list(name, sportsTypeId, province, contactType, enabled));
+    return Result.success(service.list(name, sportsTypeId, province, cityCode, contactType, enabled));
   }
 
   // DTO转Entity的辅助方法

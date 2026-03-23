@@ -123,6 +123,7 @@ public class VenueDto {
   public static class PageRequest {
     private Integer page = 0; // 页码，从0开始
     private Integer size = 10; // 每页大小，默认10
+    private String cityCode; // 城市编码（按venue.city筛选）
 
     public Integer getPage() {
       return page;
@@ -138,6 +139,14 @@ public class VenueDto {
 
     public void setSize(Integer size) {
       this.size = size;
+    }
+
+    public String getCityCode() {
+      return cityCode;
+    }
+
+    public void setCityCode(String cityCode) {
+      this.cityCode = cityCode;
     }
   }
 

@@ -15,6 +15,7 @@ public class VenueDto {
     private String description;
     private Long sportsTypeId; // 体育类型ID
     private String province; // 省
+    private String cityCode; // 城市编码（按venue.city筛选）
     private String city; // 市
     private String district; // 区
     private String address;
@@ -72,6 +73,14 @@ public class VenueDto {
 
     public void setCity(String city) {
       this.city = city;
+    }
+
+    public String getCityCode() {
+      return cityCode;
+    }
+
+    public void setCityCode(String cityCode) {
+      this.cityCode = cityCode;
     }
 
     public String getDistrict() {

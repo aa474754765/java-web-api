@@ -142,8 +142,8 @@ public class VenueServiceImpl implements VenueService {
   }
 
   @Override
-  public List<VenueDto.VenueListItem> list(String name, Long sportsTypeId, String province, String contactType,
-      String enabled) {
+  public List<VenueDto.VenueListItem> list(String name, Long sportsTypeId, String province, String cityCode,
+      String contactType, String enabled) {
     // 使用 Specification 动态构建查询条件
     Specification<Venue> spec = (root, query, cb) -> {
       List<Predicate> predicates = new java.util.ArrayList<>();
@@ -157,6 +157,9 @@ public class VenueServiceImpl implements VenueService {
       }
       if (province != null && !province.trim().isEmpty()) {
         predicates.add(cb.equal(root.get("province"), province.trim()));
+      }
+      if (cityCode != null && !cityCode.trim().isEmpty()) {
+        predicates.add(cb.equal(root.get("city"), cityCode.trim()));
       }
       if (contactType != null && !contactType.trim().isEmpty()) {
         predicates.add(cb.equal(root.get("contactType"), contactType.trim()));

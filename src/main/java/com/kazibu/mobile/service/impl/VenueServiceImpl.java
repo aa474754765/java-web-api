@@ -16,8 +16,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.criteria.Predicate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,14 +42,21 @@ public class VenueServiceImpl implements VenueService {
   private String urlPrefix;
 
   @Override
-  public VenueDto.PageResponse<VenueDto.VenueListItem> getVenueList(int page, int size) {
+  public VenueDto.PageResponse<VenueDto.VenueListItem> getVenueList(int page, int size, String cityCode) {
     // 确保每页最多10条
     int pageSize = Math.min(size, 10);
     // 创建分页请求，按order字段升序排序（order是实体属性名，对应数据库列sort_order）
     Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.ASC, "order"));
 
-    // 查询所有场馆（不限制enabled状态）
-    Page<Venue> venuePage = venueRepository.findAll(pageable);
+    // 查询场馆（支持按城市编码筛选，城市编码存储在venue.city字段）
+    Specification<Venue> spec = (root, query, cb) -> {
+      List<Predicate> predicates = new java.util.ArrayList<>();
+      if (cityCode != null && !cityCode.trim().isEmpty()) {
+        predicates.add(cb.equal(root.get("city"), cityCode.trim()));
+      }
+      return cb.and(predicates.toArray(new Predicate[0]));
+    };
+    Page<Venue> venuePage = venueRepository.findAll(spec, pageable);
 
     // 转换为移动端DTO
     List<VenueDto.VenueListItem> items = venuePage.getContent().stream()

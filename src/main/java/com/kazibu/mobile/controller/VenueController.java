@@ -26,11 +26,12 @@ public class VenueController {
       // 默认值：第0页，每页10条
       int page = (request != null && request.getPage() != null) ? request.getPage() : 0;
       int size = (request != null && request.getSize() != null) ? request.getSize() : 10;
+      String cityCode = (request != null) ? request.getCityCode() : null;
 
       // 确保每页最多10条
       size = Math.min(size, 10);
 
-      VenueDto.PageResponse<VenueDto.VenueListItem> response = venueService.getVenueList(page, size);
+      VenueDto.PageResponse<VenueDto.VenueListItem> response = venueService.getVenueList(page, size, cityCode);
       return Result.success(response);
     } catch (Exception e) {
       return Result.error("QUERY_ERROR", "查询失败: " + e.getMessage());

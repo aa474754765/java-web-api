@@ -13,6 +13,7 @@ public interface VenueService {
 
   Venue get(Long id);
 
-  List<VenueDto.VenueListItem> list(String name, Long sportsTypeId, String province, String contactType, String enabled);
+  List<VenueDto.VenueListItem> list(String name, Long sportsTypeId, String province, String cityCode,
+      String contactType, String enabled);
 }
 

@@ -1,4 +1,4 @@
-﻿package com.kazibu.system.config;
+package com.kazibu.system.config;
 
 import com.kazibu.system.entity.Region;
 import com.kazibu.system.repository.RegionRepository;
