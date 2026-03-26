@@ -12,10 +12,6 @@ import com.kazibu.sports.repository.VenueRelayRepository;
 import com.kazibu.sports.repository.VenueRepository;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -61,6 +58,7 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     relay.setJoinedPeople(0);
     relay.setContactInfo(safeTrim(request.getContactInfo()));
     relay.setStatus("1");
+    relay.setIsPublic((request.getIsPublic() == null || request.getIsPublic().trim().isEmpty()) ? "1" : request.getIsPublic().trim());
     relay.setAvgCost(request.getAvgCost());
     relay.setRemark(safeTrim(request.getRemark()));
     relay.setCreatorUserId(currentUser.getId());
@@ -73,15 +71,30 @@ public class VenueRelayServiceImpl implements VenueRelayService {
   @Transactional
   public VenueRelayDto.PageResponse<VenueRelayDto.RelayListItem> queryRelayList(VenueRelayDto.RelayPageRequest request) {
     refreshExpiredRelays();
+    Long currentUserId = getCurrentUserIdIfLoggedIn();
+    Integer tabType = request != null ? request.getTabType() : null;
+    boolean requireLogin = Boolean.TRUE.equals(request != null ? request.getSelfOnly() : null)
+        || (tabType != null && (tabType == 1 || tabType == 2));
+    if (requireLogin && currentUserId == null) {
+      VenueRelayDto.PageResponse<VenueRelayDto.RelayListItem> emptyResponse = new VenueRelayDto.PageResponse<>();
+      emptyResponse.setList(new ArrayList<>());
+      emptyResponse.setPage((request != null && request.getPage() != null && request.getPage() >= 0) ? request.getPage() : 0);
+      int reqSize = (request != null && request.getSize() != null && request.getSize() > 0) ? request.getSize() : 10;
+      emptyResponse.setSize(Math.min(reqSize, 20));
+      emptyResponse.setTotal(0L);
+      emptyResponse.setTotalPages(0);
+      return emptyResponse;
+    }
+    List<Long> joinedRelayIds = currentUserId == null ? new ArrayList<>()
+        : participantRepository.findAllByUserIdAndStatus(currentUserId, "1")
+            .stream()
+            .map(p -> p.getRelay() != null ? p.getRelay().getId() : null)
+            .filter(id -> id != null)
+            .collect(Collectors.toList());
 
     int page = (request != null && request.getPage() != null && request.getPage() >= 0) ? request.getPage() : 0;
     int size = (request != null && request.getSize() != null && request.getSize() > 0) ? request.getSize() : 10;
     size = Math.min(size, 20);
-
-    Pageable pageable = PageRequest.of(page, size, Sort.by(
-        Sort.Order.desc("startDate"),
-        Sort.Order.asc("startTime"),
-        Sort.Order.desc("createTime")));
 
     Specification<VenueRelay> spec = (root, query, cb) -> {
       List<Predicate> predicates = new ArrayList<>();
@@ -95,13 +108,46 @@ public class VenueRelayServiceImpl implements VenueRelayService {
         if (request.getStatus() != null && !request.getStatus().trim().isEmpty()) {
           predicates.add(cb.equal(root.get("status"), request.getStatus().trim()));
         }
+        if (request.getIsPublic() != null && !request.getIsPublic().trim().isEmpty()) {
+          predicates.add(cb.equal(root.get("isPublic"), request.getIsPublic().trim()));
+        }
+        if (tabType != null) {
+          if (tabType == 1) {
+            predicates.add(cb.equal(root.get("creatorUserId"), currentUserId));
+          } else if (tabType == 2) {
+            if (joinedRelayIds.isEmpty()) {
+              predicates.add(cb.disjunction());
+            } else {
+              predicates.add(root.get("id").in(joinedRelayIds));
+            }
+            predicates.add(cb.notEqual(root.get("creatorUserId"), currentUserId));
+          }
+        }
+        if (Boolean.TRUE.equals(request.getSelfOnly())) {
+          predicates.add(cb.equal(root.get("creatorUserId"), currentUserId));
+        }
+      }
+      boolean allTab = tabType == null || tabType == 3;
+      boolean selfQuery = Boolean.TRUE.equals(request != null ? request.getSelfOnly() : null)
+          || (tabType != null && (tabType == 1 || tabType == 2));
+      if (allTab && !selfQuery) {
+        predicates.add(cb.equal(root.get("isPublic"), "1"));
       }
       return cb.and(predicates.toArray(new Predicate[0]));
     };
 
-    Long currentUserId = getCurrentUser().getId();
-    Page<VenueRelay> relayPage = venueRelayRepository.findAll(spec, pageable);
-    List<VenueRelayDto.RelayListItem> list = relayPage.getContent().stream()
+    List<VenueRelay> filteredRelays = venueRelayRepository.findAll(spec);
+    Comparator<VenueRelay> relayComparator = Comparator
+        .comparingInt(this::statusRank)
+        .thenComparingLong(this::startDistanceToNowSeconds)
+        .thenComparing(VenueRelay::getCreateTime, Comparator.nullsLast(Comparator.reverseOrder()));
+    filteredRelays.sort(relayComparator);
+
+    int fromIndex = Math.min(page * size, filteredRelays.size());
+    int toIndex = Math.min(fromIndex + size, filteredRelays.size());
+    List<VenueRelay> pageContent = filteredRelays.subList(fromIndex, toIndex);
+
+    List<VenueRelayDto.RelayListItem> list = pageContent.stream()
         .map(relay -> toListItem(relay, currentUserId))
         .collect(Collectors.toList());
 
@@ -109,9 +155,32 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     response.setList(list);
     response.setPage(page);
     response.setSize(size);
-    response.setTotal(relayPage.getTotalElements());
-    response.setTotalPages(relayPage.getTotalPages());
+    long total = filteredRelays.size();
+    response.setTotal(total);
+    response.setTotalPages((int) Math.ceil((double) total / size));
     return response;
+  }
+
+  private int statusRank(VenueRelay relay) {
+    String status = relay.getStatus();
+    if ("1".equals(status)) {
+      return 1;
+    }
+    if ("2".equals(status)) {
+      return 2;
+    }
+    if ("3".equals(status)) {
+      return 3;
+    }
+    return 99;
+  }
+
+  private long startDistanceToNowSeconds(VenueRelay relay) {
+    if (relay.getStartDate() == null || relay.getStartTime() == null) {
+      return Long.MAX_VALUE;
+    }
+    LocalDateTime startDateTime = LocalDateTime.of(relay.getStartDate(), relay.getStartTime());
+    return Math.abs(java.time.Duration.between(LocalDateTime.now(), startDateTime).getSeconds());
   }
 
   @Override
@@ -187,13 +256,14 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     item.setJoinedPeople(relay.getJoinedPeople());
     item.setContactInfo(relay.getContactInfo());
     item.setStatus(relay.getStatus());
+    item.setIsPublic(relay.getIsPublic());
     item.setAvgCost(relay.getAvgCost());
     item.setRemark(relay.getRemark());
     item.setCreatorUserId(relay.getCreatorUserId());
     item.setCreatorUsername(relay.getCreatorUsername());
     item.setCreateTime(relay.getCreateTime());
-    item.setJoinedByCurrentUser(
-        participantRepository.existsByRelay_IdAndUserIdAndStatus(relay.getId(), currentUserId, "1"));
+    item.setJoinedByCurrentUser(currentUserId != null
+        && participantRepository.existsByRelay_IdAndUserIdAndStatus(relay.getId(), currentUserId, "1"));
     List<String> participantUserNames = participantRepository
         .findAllByRelay_IdAndStatusOrderByJoinTimeAsc(relay.getId(), "1")
         .stream()
@@ -246,5 +316,19 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     }
     String username = authentication.getName();
     return userRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("当前用户不存在"));
+  }
+
+  private Long getCurrentUserIdIfLoggedIn() {
+    try {
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      if (authentication == null || !authentication.isAuthenticated()
+          || "anonymousUser".equals(authentication.getName())) {
+        return null;
+      }
+      String username = authentication.getName();
+      return userRepository.findByUsername(username).map(User::getId).orElse(null);
+    } catch (Exception ignored) {
+      return null;
+    }
   }
 }

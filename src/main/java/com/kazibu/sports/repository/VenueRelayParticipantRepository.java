@@ -11,5 +11,7 @@ public interface VenueRelayParticipantRepository extends JpaRepository<VenueRela
 
   boolean existsByRelay_IdAndUserIdAndStatus(Long relayId, Long userId, String status);
 
+  List<VenueRelayParticipant> findAllByUserIdAndStatus(Long userId, String status);
+
   List<VenueRelayParticipant> findAllByRelay_IdAndStatusOrderByJoinTimeAsc(Long relayId, String status);
 }

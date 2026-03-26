@@ -21,6 +21,7 @@ public class VenueRelayDto {
     private Integer maxPeople;
     private String contactInfo;
     private BigDecimal avgCost;
+    private String isPublic; // 是否公开：1-公开，0-不公开
     private String remark;
 
     public Long getVenueId() {
@@ -87,6 +88,14 @@ public class VenueRelayDto {
       this.avgCost = avgCost;
     }
 
+    public String getIsPublic() {
+      return isPublic;
+    }
+
+    public void setIsPublic(String isPublic) {
+      this.isPublic = isPublic;
+    }
+
     public String getRemark() {
       return remark;
     }
@@ -133,6 +142,9 @@ public class VenueRelayDto {
     private Integer page = 0;
     private Integer size = 10;
     private Long venueId;
+    private Integer tabType; // 1-我发起的，2-我参与的(不含我发起)，3-全部
+    private Boolean selfOnly; // 是否仅查询本人创建的接龙
+    private String isPublic; // 是否公开筛选：1-公开，0-不公开
     private String status;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
@@ -159,6 +171,30 @@ public class VenueRelayDto {
 
     public void setVenueId(Long venueId) {
       this.venueId = venueId;
+    }
+
+    public Integer getTabType() {
+      return tabType;
+    }
+
+    public void setTabType(Integer tabType) {
+      this.tabType = tabType;
+    }
+
+    public Boolean getSelfOnly() {
+      return selfOnly;
+    }
+
+    public void setSelfOnly(Boolean selfOnly) {
+      this.selfOnly = selfOnly;
+    }
+
+    public String getIsPublic() {
+      return isPublic;
+    }
+
+    public void setIsPublic(String isPublic) {
+      this.isPublic = isPublic;
     }
 
     public String getStatus() {
@@ -192,11 +228,23 @@ public class VenueRelayDto {
     private Integer maxPeople;
     private Integer joinedPeople;
     private String contactInfo;
+    /**
+     * 接龙状态
+     * 1 - 进行中
+     * 2 - 已结束
+     * 3 - 已取消
+     */
     private String status;
+    private String isPublic;
     private BigDecimal avgCost;
     private String remark;
     private Long creatorUserId;
     private String creatorUsername;
+    /**
+     * joinedByCurrentUser 字段表示当前用户是否已加入该接龙（true 已加入，false 未加入）。
+     * participantUserNames 字段表示已加入该接龙的用户名列表。
+     * createTime 字段表示接龙创建的日期和时间（格式为 yyyy-MM-dd HH:mm:ss）。
+     */
     private Boolean joinedByCurrentUser;
     private List<String> participantUserNames;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -288,6 +336,14 @@ public class VenueRelayDto {
 
     public void setStatus(String status) {
       this.status = status;
+    }
+
+    public String getIsPublic() {
+      return isPublic;
+    }
+
+    public void setIsPublic(String isPublic) {
+      this.isPublic = isPublic;
     }
 
     public BigDecimal getAvgCost() {

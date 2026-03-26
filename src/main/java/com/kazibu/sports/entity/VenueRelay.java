@@ -49,6 +49,12 @@ public class VenueRelay {
   @Column(name = "status", nullable = false, length = 1)
   private String status = "1";
 
+  /**
+   * 是否公开：1-公开，0-不公开
+   */
+  @Column(name = "is_public", nullable = false, length = 1)
+  private String isPublic = "1";
+
   @Column(name = "avg_cost", precision = 10, scale = 2)
   private BigDecimal avgCost;
 
@@ -80,6 +86,9 @@ public class VenueRelay {
     if (this.status == null || this.status.trim().isEmpty()) {
       this.status = "1";
     }
+    if (this.isPublic == null || this.isPublic.trim().isEmpty()) {
+      this.isPublic = "1";
+    }
   }
 
   @PreUpdate
@@ -90,6 +99,9 @@ public class VenueRelay {
     }
     if (this.status == null || this.status.trim().isEmpty()) {
       this.status = "1";
+    }
+    if (this.isPublic == null || this.isPublic.trim().isEmpty()) {
+      this.isPublic = "1";
     }
   }
 
@@ -171,6 +183,14 @@ public class VenueRelay {
 
   public void setStatus(String status) {
     this.status = status;
+  }
+
+  public String getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(String isPublic) {
+    this.isPublic = isPublic;
   }
 
   public BigDecimal getAvgCost() {
