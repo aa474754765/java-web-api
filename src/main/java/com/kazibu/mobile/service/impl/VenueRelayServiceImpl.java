@@ -10,6 +10,7 @@ import com.kazibu.sports.entity.VenueRelayParticipant;
 import com.kazibu.sports.repository.VenueRelayParticipantRepository;
 import com.kazibu.sports.repository.VenueRelayRepository;
 import com.kazibu.sports.repository.VenueRepository;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -53,7 +54,6 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     relay.setStartDate(request.getStartDate());
     relay.setStartTime(request.getStartTime());
     relay.setEndTime(request.getEndTime());
-    relay.setCourtName(request.getCourtName().trim());
     relay.setMaxPeople(request.getMaxPeople());
     relay.setJoinedPeople(0);
     relay.setContactInfo(safeTrim(request.getContactInfo()));
@@ -61,10 +61,51 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     relay.setIsPublic((request.getIsPublic() == null || request.getIsPublic().trim().isEmpty()) ? "1" : request.getIsPublic().trim());
     relay.setAvgCost(request.getAvgCost());
     relay.setRemark(safeTrim(request.getRemark()));
+    relay.setSkillLevel(safeTrim(request.getSkillLevel()));
     relay.setCreatorUserId(currentUser.getId());
     relay.setCreatorUsername(currentUser.getUsername());
 
     return venueRelayRepository.save(relay).getId();
+  }
+
+  @Override
+  @Transactional
+  public void updateRelay(VenueRelayDto.EditRequest request) {
+    validateEditRequest(request);
+    User currentUser = getCurrentUser();
+    VenueRelay relay = venueRelayRepository.findById(request.getRelayId())
+        .orElseThrow(() -> new IllegalArgumentException("接龙不存在"));
+    if (!currentUser.getId().equals(relay.getCreatorUserId())) {
+      throw new IllegalArgumentException("仅发起人可编辑接龙");
+    }
+    Venue venue = venueRepository.findById(request.getVenueId())
+        .orElseThrow(() -> new IllegalArgumentException("场馆不存在"));
+    relay.setVenue(venue);
+    relay.setStartDate(request.getStartDate());
+    relay.setStartTime(request.getStartTime());
+    relay.setEndTime(request.getEndTime());
+    relay.setMaxPeople(request.getMaxPeople());
+    relay.setContactInfo(safeTrim(request.getContactInfo()));
+    relay.setIsPublic((request.getIsPublic() == null || request.getIsPublic().trim().isEmpty()) ? "1" : request.getIsPublic().trim());
+    relay.setAvgCost(request.getAvgCost());
+    relay.setRemark(safeTrim(request.getRemark()));
+    relay.setSkillLevel(safeTrim(request.getSkillLevel()));
+    venueRelayRepository.save(relay);
+  }
+
+  @Override
+  @Transactional
+  public void deleteRelay(VenueRelayDto.CancelRequest request) {
+    if (request == null || request.getRelayId() == null) {
+      throw new IllegalArgumentException("接龙ID不能为空");
+    }
+    User currentUser = getCurrentUser();
+    VenueRelay relay = venueRelayRepository.findById(request.getRelayId())
+        .orElseThrow(() -> new IllegalArgumentException("接龙不存在"));
+    if (!currentUser.getId().equals(relay.getCreatorUserId())) {
+      throw new IllegalArgumentException("仅发起人可删除接龙");
+    }
+    venueRelayRepository.delete(relay);
   }
 
   @Override
@@ -97,6 +138,11 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     size = Math.min(size, 20);
 
     Specification<VenueRelay> spec = (root, query, cb) -> {
+      if (query != null && VenueRelay.class.equals(query.getResultType())) {
+        var venueFetch = root.fetch("venue", JoinType.LEFT);
+        venueFetch.fetch("sportsType", JoinType.LEFT);
+        query.distinct(true);
+      }
       List<Predicate> predicates = new ArrayList<>();
       if (request != null) {
         if (request.getVenueId() != null) {
@@ -110,6 +156,9 @@ public class VenueRelayServiceImpl implements VenueRelayService {
         }
         if (request.getIsPublic() != null && !request.getIsPublic().trim().isEmpty()) {
           predicates.add(cb.equal(root.get("isPublic"), request.getIsPublic().trim()));
+        }
+        if (request.getSkillLevel() != null && !request.getSkillLevel().trim().isEmpty()) {
+          predicates.add(cb.equal(root.get("skillLevel"), request.getSkillLevel().trim()));
         }
         if (tabType != null) {
           if (tabType == 1) {
@@ -246,12 +295,10 @@ public class VenueRelayServiceImpl implements VenueRelayService {
   private VenueRelayDto.RelayListItem toListItem(VenueRelay relay, Long currentUserId) {
     VenueRelayDto.RelayListItem item = new VenueRelayDto.RelayListItem();
     item.setId(relay.getId());
-    item.setVenueId(relay.getVenue() != null ? relay.getVenue().getId() : null);
-    item.setVenueName(relay.getVenue() != null ? relay.getVenue().getName() : null);
+    item.setVenueInfo(buildVenueInfo(relay.getVenue()));
     item.setStartDate(relay.getStartDate());
     item.setStartTime(relay.getStartTime());
     item.setEndTime(relay.getEndTime());
-    item.setCourtName(relay.getCourtName());
     item.setMaxPeople(relay.getMaxPeople());
     item.setJoinedPeople(relay.getJoinedPeople());
     item.setContactInfo(relay.getContactInfo());
@@ -259,6 +306,7 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     item.setIsPublic(relay.getIsPublic());
     item.setAvgCost(relay.getAvgCost());
     item.setRemark(relay.getRemark());
+    item.setSkillLevel(relay.getSkillLevel());
     item.setCreatorUserId(relay.getCreatorUserId());
     item.setCreatorUsername(relay.getCreatorUsername());
     item.setCreateTime(relay.getCreateTime());
@@ -271,6 +319,30 @@ public class VenueRelayServiceImpl implements VenueRelayService {
         .collect(Collectors.toList());
     item.setParticipantUserNames(participantUserNames);
     return item;
+  }
+
+  private VenueRelayDto.VenueInfo buildVenueInfo(Venue venue) {
+    if (venue == null) {
+      return null;
+    }
+    VenueRelayDto.VenueInfo info = new VenueRelayDto.VenueInfo();
+    info.setId(venue.getId());
+    info.setName(venue.getName());
+    info.setDescription(venue.getDescription());
+    if (venue.getSportsType() != null) {
+      info.setSportsTypeId(venue.getSportsType().getId());
+      info.setSportsTypeName(venue.getSportsType().getType());
+    }
+    info.setProvince(venue.getProvince());
+    info.setCity(venue.getCity());
+    info.setDistrict(venue.getDistrict());
+    info.setAddress(venue.getAddress());
+    info.setLatitude(venue.getLatitude());
+    info.setLongitude(venue.getLongitude());
+    info.setContactType(venue.getContactType());
+    info.setContactInfo(venue.getContactInfo());
+    info.setRating(venue.getRating());
+    return info;
   }
 
   private void refreshExpiredRelays() {
@@ -293,15 +365,25 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     if (!request.getEndTime().isAfter(request.getStartTime())) {
       throw new IllegalArgumentException("结束时间必须晚于开始时间");
     }
-    if (request.getCourtName() == null || request.getCourtName().trim().isEmpty()) {
-      throw new IllegalArgumentException("场地不能为空");
-    }
     if (request.getMaxPeople() == null || request.getMaxPeople() <= 0) {
       throw new IllegalArgumentException("报名人数上限必须大于0");
     }
     if (request.getRemark() != null && request.getRemark().length() > 1000) {
       throw new IllegalArgumentException("备注长度不能超过1000");
     }
+    if (request.getSkillLevel() == null || request.getSkillLevel().trim().isEmpty()) {
+      throw new IllegalArgumentException("水平等级不能为空");
+    }
+    if (request.getSkillLevel().trim().length() > 50) {
+      throw new IllegalArgumentException("水平等级长度不能超过50");
+    }
+  }
+
+  private void validateEditRequest(VenueRelayDto.EditRequest request) {
+    if (request == null || request.getRelayId() == null) {
+      throw new IllegalArgumentException("接龙ID不能为空");
+    }
+    validateCreateRequest(request);
   }
 
   private String safeTrim(String value) {

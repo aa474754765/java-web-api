@@ -17,12 +17,12 @@ public class VenueRelayDto {
     private LocalTime startTime;
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime endTime;
-    private String courtName;
     private Integer maxPeople;
     private String contactInfo;
     private BigDecimal avgCost;
     private String isPublic; // 是否公开：1-公开，0-不公开
     private String remark;
+    private String skillLevel; // 水平等级
 
     public Long getVenueId() {
       return venueId;
@@ -54,14 +54,6 @@ public class VenueRelayDto {
 
     public void setEndTime(LocalTime endTime) {
       this.endTime = endTime;
-    }
-
-    public String getCourtName() {
-      return courtName;
-    }
-
-    public void setCourtName(String courtName) {
-      this.courtName = courtName;
     }
 
     public Integer getMaxPeople() {
@@ -102,6 +94,27 @@ public class VenueRelayDto {
 
     public void setRemark(String remark) {
       this.remark = remark;
+    }
+
+    public String getSkillLevel() {
+      return skillLevel;
+    }
+
+    public void setSkillLevel(String skillLevel) {
+      this.skillLevel = skillLevel;
+    }
+  }
+
+  /** 编辑接龙：字段同创建请求，另需 relayId */
+  public static class EditRequest extends CreateRequest {
+    private Long relayId;
+
+    public Long getRelayId() {
+      return relayId;
+    }
+
+    public void setRelayId(Long relayId) {
+      this.relayId = relayId;
     }
   }
 
@@ -145,6 +158,7 @@ public class VenueRelayDto {
     private Integer tabType; // 1-我发起的，2-我参与的(不含我发起)，3-全部
     private Boolean selfOnly; // 是否仅查询本人创建的接龙
     private String isPublic; // 是否公开筛选：1-公开，0-不公开
+    private String skillLevel; // 水平等级筛选
     private String status;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
@@ -197,6 +211,14 @@ public class VenueRelayDto {
       this.isPublic = isPublic;
     }
 
+    public String getSkillLevel() {
+      return skillLevel;
+    }
+
+    public void setSkillLevel(String skillLevel) {
+      this.skillLevel = skillLevel;
+    }
+
     public String getStatus() {
       return status;
     }
@@ -214,17 +236,145 @@ public class VenueRelayDto {
     }
   }
 
+  /** 列表中返回的场馆简要信息 */
+  public static class VenueInfo {
+    private Long id;
+    private String name;
+    private String description;
+    private Long sportsTypeId;
+    private String sportsTypeName;
+    private String province;
+    private String city;
+    private String district;
+    private String address;
+    private Double latitude;
+    private Double longitude;
+    private String contactType;
+    private String contactInfo;
+    private Double rating;
+
+    public Long getId() {
+      return id;
+    }
+
+    public void setId(Long id) {
+      this.id = id;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+
+    public String getDescription() {
+      return description;
+    }
+
+    public void setDescription(String description) {
+      this.description = description;
+    }
+
+    public Long getSportsTypeId() {
+      return sportsTypeId;
+    }
+
+    public void setSportsTypeId(Long sportsTypeId) {
+      this.sportsTypeId = sportsTypeId;
+    }
+
+    public String getSportsTypeName() {
+      return sportsTypeName;
+    }
+
+    public void setSportsTypeName(String sportsTypeName) {
+      this.sportsTypeName = sportsTypeName;
+    }
+
+    public String getProvince() {
+      return province;
+    }
+
+    public void setProvince(String province) {
+      this.province = province;
+    }
+
+    public String getCity() {
+      return city;
+    }
+
+    public void setCity(String city) {
+      this.city = city;
+    }
+
+    public String getDistrict() {
+      return district;
+    }
+
+    public void setDistrict(String district) {
+      this.district = district;
+    }
+
+    public String getAddress() {
+      return address;
+    }
+
+    public void setAddress(String address) {
+      this.address = address;
+    }
+
+    public Double getLatitude() {
+      return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+      this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+      return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+      this.longitude = longitude;
+    }
+
+    public String getContactType() {
+      return contactType;
+    }
+
+    public void setContactType(String contactType) {
+      this.contactType = contactType;
+    }
+
+    public String getContactInfo() {
+      return contactInfo;
+    }
+
+    public void setContactInfo(String contactInfo) {
+      this.contactInfo = contactInfo;
+    }
+
+    public Double getRating() {
+      return rating;
+    }
+
+    public void setRating(Double rating) {
+      this.rating = rating;
+    }
+  }
+
   public static class RelayListItem {
     private Long id;
-    private Long venueId;
-    private String venueName;
+    private VenueInfo venueInfo;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime startTime;
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime endTime;
-    private String courtName;
     private Integer maxPeople;
     private Integer joinedPeople;
     private String contactInfo;
@@ -238,6 +388,7 @@ public class VenueRelayDto {
     private String isPublic;
     private BigDecimal avgCost;
     private String remark;
+    private String skillLevel;
     private Long creatorUserId;
     private String creatorUsername;
     /**
@@ -258,20 +409,12 @@ public class VenueRelayDto {
       this.id = id;
     }
 
-    public Long getVenueId() {
-      return venueId;
+    public VenueInfo getVenueInfo() {
+      return venueInfo;
     }
 
-    public void setVenueId(Long venueId) {
-      this.venueId = venueId;
-    }
-
-    public String getVenueName() {
-      return venueName;
-    }
-
-    public void setVenueName(String venueName) {
-      this.venueName = venueName;
+    public void setVenueInfo(VenueInfo venueInfo) {
+      this.venueInfo = venueInfo;
     }
 
     public LocalDate getStartDate() {
@@ -296,14 +439,6 @@ public class VenueRelayDto {
 
     public void setEndTime(LocalTime endTime) {
       this.endTime = endTime;
-    }
-
-    public String getCourtName() {
-      return courtName;
-    }
-
-    public void setCourtName(String courtName) {
-      this.courtName = courtName;
     }
 
     public Integer getMaxPeople() {
@@ -360,6 +495,14 @@ public class VenueRelayDto {
 
     public void setRemark(String remark) {
       this.remark = remark;
+    }
+
+    public String getSkillLevel() {
+      return skillLevel;
+    }
+
+    public void setSkillLevel(String skillLevel) {
+      this.skillLevel = skillLevel;
     }
 
     public Long getCreatorUserId() {

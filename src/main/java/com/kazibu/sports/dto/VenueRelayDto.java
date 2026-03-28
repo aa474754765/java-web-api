@@ -15,6 +15,7 @@ public class VenueRelayDto {
     private Long venueId;
     private String city; // 按场馆城市编码/名称筛选（对应venue.city）
     private String status;
+    private String skillLevel;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
@@ -58,6 +59,14 @@ public class VenueRelayDto {
       this.status = status;
     }
 
+    public String getSkillLevel() {
+      return skillLevel;
+    }
+
+    public void setSkillLevel(String skillLevel) {
+      this.skillLevel = skillLevel;
+    }
+
     public LocalDate getStartDate() {
       return startDate;
     }
@@ -77,13 +86,14 @@ public class VenueRelayDto {
     private LocalTime startTime;
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime endTime;
-    private String courtName;
     private Integer maxPeople;
     private Integer joinedPeople;
     private String contactInfo;
     private String status;
+    private String isPublic;
     private BigDecimal avgCost;
     private String remark;
+    private String skillLevel;
     private Long creatorUserId;
     private String creatorUsername;
     private Boolean joinedByCurrentUser;
@@ -139,14 +149,6 @@ public class VenueRelayDto {
       this.endTime = endTime;
     }
 
-    public String getCourtName() {
-      return courtName;
-    }
-
-    public void setCourtName(String courtName) {
-      this.courtName = courtName;
-    }
-
     public Integer getMaxPeople() {
       return maxPeople;
     }
@@ -179,6 +181,14 @@ public class VenueRelayDto {
       this.status = status;
     }
 
+    public String getIsPublic() {
+      return isPublic;
+    }
+
+    public void setIsPublic(String isPublic) {
+      this.isPublic = isPublic;
+    }
+
     public BigDecimal getAvgCost() {
       return avgCost;
     }
@@ -193,6 +203,14 @@ public class VenueRelayDto {
 
     public void setRemark(String remark) {
       this.remark = remark;
+    }
+
+    public String getSkillLevel() {
+      return skillLevel;
+    }
+
+    public void setSkillLevel(String skillLevel) {
+      this.skillLevel = skillLevel;
     }
 
     public Long getCreatorUserId() {

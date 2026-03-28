@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "venue_relay")
@@ -19,6 +21,9 @@ public class VenueRelay {
   @JoinColumn(name = "venue_id", nullable = false)
   private Venue venue;
 
+  @OneToMany(mappedBy = "relay", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+  private List<VenueRelayParticipant> participants = new ArrayList<>();
+
   @Column(name = "start_date", nullable = false)
   @JsonFormat(pattern = "yyyy-MM-dd")
   private LocalDate startDate;
@@ -30,9 +35,6 @@ public class VenueRelay {
   @Column(name = "end_time", nullable = false)
   @JsonFormat(pattern = "HH:mm:ss")
   private LocalTime endTime;
-
-  @Column(name = "court_name", nullable = false, length = 255)
-  private String courtName;
 
   @Column(name = "max_people", nullable = false)
   private Integer maxPeople;
@@ -60,6 +62,10 @@ public class VenueRelay {
 
   @Column(name = "remark", length = 1000)
   private String remark;
+
+  /** 水平等级（如：初级/中级/高级或业务编码） */
+  @Column(name = "skill_level", length = 50)
+  private String skillLevel;
 
   @Column(name = "creator_user_id", nullable = false)
   private Long creatorUserId;
@@ -121,6 +127,14 @@ public class VenueRelay {
     this.venue = venue;
   }
 
+  public List<VenueRelayParticipant> getParticipants() {
+    return participants;
+  }
+
+  public void setParticipants(List<VenueRelayParticipant> participants) {
+    this.participants = participants != null ? participants : new ArrayList<>();
+  }
+
   public LocalDate getStartDate() {
     return startDate;
   }
@@ -143,14 +157,6 @@ public class VenueRelay {
 
   public void setEndTime(LocalTime endTime) {
     this.endTime = endTime;
-  }
-
-  public String getCourtName() {
-    return courtName;
-  }
-
-  public void setCourtName(String courtName) {
-    this.courtName = courtName;
   }
 
   public Integer getMaxPeople() {
@@ -207,6 +213,14 @@ public class VenueRelay {
 
   public void setRemark(String remark) {
     this.remark = remark;
+  }
+
+  public String getSkillLevel() {
+    return skillLevel;
+  }
+
+  public void setSkillLevel(String skillLevel) {
+    this.skillLevel = skillLevel;
   }
 
   public Long getCreatorUserId() {

@@ -11,14 +11,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController("sportsVenueRelayController")
 @RequestMapping("/sports_venue_relay")
-@Tag(name = "场馆接龙管理", description = "场馆接龙查询接口")
+@Tag(name = "场馆接龙管理", description = "场馆接龙查询")
 public class VenueRelayController {
   @Autowired
   private VenueRelayService venueRelayService;
 
   @PostMapping("/list")
   @RequiresPermission("sports:venueRelay:list")
-  @Operation(summary = "分页查询场馆接龙", description = "分页查询场馆接龙列表，支持按场馆、城市、日期、状态筛选")
+  @Operation(
+      summary = "分页查询场馆接龙",
+      description = "分页查询场馆接龙列表，支持按场馆、城市、日期、状态、水平等级筛选（page/size 为 0 起始页码）")
   public Result<VenueRelayDto.PageResponse<VenueRelayDto.RelayListItem>> queryRelayList(
       @RequestBody(required = false) VenueRelayDto.RelayPageRequest request) {
     try {

@@ -29,9 +29,35 @@ public class VenueRelayController {
     }
   }
 
+  @PostMapping("/venue/relay/edit")
+  @Operation(summary = "编辑接龙", description = "仅发起人可编辑，字段与创建一致并需传 relayId")
+  public Result<String> updateRelay(@RequestBody VenueRelayDto.EditRequest request) {
+    try {
+      venueRelayService.updateRelay(request);
+      return Result.success("更新成功");
+    } catch (IllegalArgumentException e) {
+      return Result.error("VALIDATION_ERROR", e.getMessage());
+    } catch (Exception e) {
+      return Result.error("UPDATE_ERROR", "更新失败: " + e.getMessage());
+    }
+  }
+
+  @PostMapping("/venue/relay/delete")
+  @Operation(summary = "删除接龙", description = "仅发起人可删除；会一并删除参与记录")
+  public Result<String> deleteRelay(@RequestBody VenueRelayDto.CancelRequest request) {
+    try {
+      venueRelayService.deleteRelay(request);
+      return Result.success("删除成功");
+    } catch (IllegalArgumentException e) {
+      return Result.error("VALIDATION_ERROR", e.getMessage());
+    } catch (Exception e) {
+      return Result.error("DELETE_ERROR", "删除失败: " + e.getMessage());
+    }
+  }
+
   @PostMapping("/venue/relay/list")
   @PublicAccess
-  @Operation(summary = "分页查询接龙", description = "分页查询场馆接龙列表")
+  @Operation(summary = "分页查询接龙", description = "分页查询场馆接龙列表；每项含 venueInfo（场馆名称、地址、经纬度等），服务端已做关联预加载以降低查询次数")
   public Result<VenueRelayDto.PageResponse<VenueRelayDto.RelayListItem>> queryRelayList(
       @RequestBody(required = false) VenueRelayDto.RelayPageRequest request) {
     try {
