@@ -22,6 +22,7 @@ public class VenueRelayDto {
     private BigDecimal avgCost;
     private String isPublic; // 是否公开：1-公开，0-不公开
     private String remark;
+    private String venueImage; // 场馆图片
     private String skillLevel; // 水平等级
 
     public Long getVenueId() {
@@ -94,6 +95,14 @@ public class VenueRelayDto {
 
     public void setRemark(String remark) {
       this.remark = remark;
+    }
+
+    public String getVenueImage() {
+      return venueImage;
+    }
+
+    public void setVenueImage(String venueImage) {
+      this.venueImage = venueImage;
     }
 
     public String getSkillLevel() {
@@ -388,6 +397,7 @@ public class VenueRelayDto {
     private String isPublic;
     private BigDecimal avgCost;
     private String remark;
+    private String venueImage;
     private String skillLevel;
     private Long creatorUserId;
     private String creatorUsername;
@@ -495,6 +505,14 @@ public class VenueRelayDto {
 
     public void setRemark(String remark) {
       this.remark = remark;
+    }
+
+    public String getVenueImage() {
+      return venueImage;
+    }
+
+    public void setVenueImage(String venueImage) {
+      this.venueImage = venueImage;
     }
 
     public String getSkillLevel() {

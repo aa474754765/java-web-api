@@ -61,6 +61,7 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     relay.setIsPublic((request.getIsPublic() == null || request.getIsPublic().trim().isEmpty()) ? "1" : request.getIsPublic().trim());
     relay.setAvgCost(request.getAvgCost());
     relay.setRemark(safeTrim(request.getRemark()));
+    relay.setVenueImage(safeTrim(request.getVenueImage()));
     relay.setSkillLevel(safeTrim(request.getSkillLevel()));
     relay.setCreatorUserId(currentUser.getId());
     relay.setCreatorUsername(currentUser.getUsername());
@@ -89,6 +90,7 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     relay.setIsPublic((request.getIsPublic() == null || request.getIsPublic().trim().isEmpty()) ? "1" : request.getIsPublic().trim());
     relay.setAvgCost(request.getAvgCost());
     relay.setRemark(safeTrim(request.getRemark()));
+    relay.setVenueImage(safeTrim(request.getVenueImage()));
     relay.setSkillLevel(safeTrim(request.getSkillLevel()));
     venueRelayRepository.save(relay);
   }
@@ -306,6 +308,7 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     item.setIsPublic(relay.getIsPublic());
     item.setAvgCost(relay.getAvgCost());
     item.setRemark(relay.getRemark());
+    item.setVenueImage(relay.getVenueImage());
     item.setSkillLevel(relay.getSkillLevel());
     item.setCreatorUserId(relay.getCreatorUserId());
     item.setCreatorUsername(relay.getCreatorUsername());
@@ -370,6 +373,9 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     }
     if (request.getRemark() != null && request.getRemark().length() > 1000) {
       throw new IllegalArgumentException("备注长度不能超过1000");
+    }
+    if (request.getVenueImage() != null && request.getVenueImage().trim().length() > 1000) {
+      throw new IllegalArgumentException("场馆图片长度不能超过1000");
     }
     if (request.getSkillLevel() == null || request.getSkillLevel().trim().isEmpty()) {
       throw new IllegalArgumentException("水平等级不能为空");

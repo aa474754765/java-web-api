@@ -63,6 +63,10 @@ public class VenueRelay {
   @Column(name = "remark", length = 1000)
   private String remark;
 
+  /** 接龙展示图片（通常为场馆主图 URL） */
+  @Column(name = "venue_image", length = 1000)
+  private String venueImage;
+
   /** 水平等级（如：初级/中级/高级或业务编码） */
   @Column(name = "skill_level", length = 50)
   private String skillLevel;
@@ -213,6 +217,14 @@ public class VenueRelay {
 
   public void setRemark(String remark) {
     this.remark = remark;
+  }
+
+  public String getVenueImage() {
+    return venueImage;
+  }
+
+  public void setVenueImage(String venueImage) {
+    this.venueImage = venueImage;
   }
 
   public String getSkillLevel() {

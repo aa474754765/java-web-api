@@ -20,6 +20,6 @@ public interface VenueRelayRepository extends JpaRepository<VenueRelay, Long>, J
 
   @Modifying
   @Query("update VenueRelay r set r.status = '2' " +
-      "where r.status = '1' and (r.startDate < current_date or (r.startDate = current_date and r.endTime <= current_time))")
+      "where r.status = '1' and (r.startDate < current_date or (r.startDate = current_date and r.startTime <= current_time))")
   int closeExpiredRelays();
 }

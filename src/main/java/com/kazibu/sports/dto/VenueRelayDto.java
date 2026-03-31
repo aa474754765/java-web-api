@@ -93,6 +93,7 @@ public class VenueRelayDto {
     private String isPublic;
     private BigDecimal avgCost;
     private String remark;
+    private String venueImage;
     private String skillLevel;
     private Long creatorUserId;
     private String creatorUsername;
@@ -203,6 +204,14 @@ public class VenueRelayDto {
 
     public void setRemark(String remark) {
       this.remark = remark;
+    }
+
+    public String getVenueImage() {
+      return venueImage;
+    }
+
+    public void setVenueImage(String venueImage) {
+      this.venueImage = venueImage;
     }
 
     public String getSkillLevel() {

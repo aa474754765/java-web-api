@@ -87,6 +87,7 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     item.setIsPublic(relay.getIsPublic());
     item.setAvgCost(relay.getAvgCost());
     item.setRemark(relay.getRemark());
+    item.setVenueImage(relay.getVenueImage());
     item.setSkillLevel(relay.getSkillLevel());
     item.setCreatorUserId(relay.getCreatorUserId());
     item.setCreatorUsername(relay.getCreatorUsername());
