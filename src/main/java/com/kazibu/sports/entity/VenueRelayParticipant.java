@@ -25,6 +25,9 @@ public class VenueRelayParticipant {
   @Column(name = "user_name", nullable = false, length = 100)
   private String userName;
 
+  @Column(name = "user_avatar", length = 500)
+  private String userAvatar;
+
   @Column(name = "contact_info", length = 255)
   private String contactInfo;
 
@@ -101,6 +104,14 @@ public class VenueRelayParticipant {
 
   public void setUserName(String userName) {
     this.userName = userName;
+  }
+
+  public String getUserAvatar() {
+    return userAvatar;
+  }
+
+  public void setUserAvatar(String userAvatar) {
+    this.userAvatar = userAvatar;
   }
 
   public String getContactInfo() {

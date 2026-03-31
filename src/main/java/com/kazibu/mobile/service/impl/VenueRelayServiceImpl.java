@@ -55,7 +55,6 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     relay.setStartTime(request.getStartTime());
     relay.setEndTime(request.getEndTime());
     relay.setMaxPeople(request.getMaxPeople());
-    relay.setJoinedPeople(0);
     relay.setContactInfo(safeTrim(request.getContactInfo()));
     relay.setStatus("1");
     relay.setIsPublic((request.getIsPublic() == null || request.getIsPublic().trim().isEmpty()) ? "1" : request.getIsPublic().trim());
@@ -65,8 +64,20 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     relay.setSkillLevel(safeTrim(request.getSkillLevel()));
     relay.setCreatorUserId(currentUser.getId());
     relay.setCreatorUsername(currentUser.getUsername());
+    relay.setJoinedPeople(1);
 
-    return venueRelayRepository.save(relay).getId();
+    VenueRelay savedRelay = venueRelayRepository.save(relay);
+    VenueRelayParticipant creatorParticipant = new VenueRelayParticipant();
+    creatorParticipant.setRelay(savedRelay);
+    creatorParticipant.setUserId(currentUser.getId());
+    creatorParticipant.setUserName(currentUser.getUsername());
+    creatorParticipant.setUserAvatar(safeTrim(currentUser.getWxAvatarUrl()));
+    creatorParticipant.setContactInfo(safeTrim(request.getContactInfo()));
+    creatorParticipant.setStatus("1");
+    creatorParticipant.setJoinTime(LocalDateTime.now());
+    creatorParticipant.setCancelTime(null);
+    participantRepository.save(creatorParticipant);
+    return savedRelay.getId();
   }
 
   @Override
@@ -265,6 +276,7 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     participant.setRelay(relay);
     participant.setUserId(currentUser.getId());
     participant.setUserName(currentUser.getUsername());
+    participant.setUserAvatar(safeTrim(currentUser.getWxAvatarUrl()));
     participant.setContactInfo(safeTrim(request.getContactInfo()));
     participant.setStatus("1");
     participant.setJoinTime(LocalDateTime.now());
@@ -315,13 +327,21 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     item.setCreateTime(relay.getCreateTime());
     item.setJoinedByCurrentUser(currentUserId != null
         && participantRepository.existsByRelay_IdAndUserIdAndStatus(relay.getId(), currentUserId, "1"));
-    List<String> participantUserNames = participantRepository
-        .findAllByRelay_IdAndStatusOrderByJoinTimeAsc(relay.getId(), "1")
+    List<VenueRelayParticipant> activeParticipants = participantRepository
+        .findAllByRelay_IdAndStatusOrderByJoinTimeAsc(relay.getId(), "1");
+    List<VenueRelayDto.RelayListItem.ParticipantInfo> participantInfos = activeParticipants
         .stream()
-        .map(VenueRelayParticipant::getUserName)
+        .map(this::toParticipantInfo)
         .collect(Collectors.toList());
-    item.setParticipantUserNames(participantUserNames);
+    item.setParticipants(participantInfos);
     return item;
+  }
+
+  private VenueRelayDto.RelayListItem.ParticipantInfo toParticipantInfo(VenueRelayParticipant participant) {
+    VenueRelayDto.RelayListItem.ParticipantInfo info = new VenueRelayDto.RelayListItem.ParticipantInfo();
+    info.setUserName(participant.getUserName());
+    info.setUserAvatar(participant.getUserAvatar());
+    return info;
   }
 
   private VenueRelayDto.VenueInfo buildVenueInfo(Venue venue) {

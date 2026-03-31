@@ -376,6 +376,27 @@ public class VenueRelayDto {
   }
 
   public static class RelayListItem {
+    public static class ParticipantInfo {
+      private String userName;
+      private String userAvatar;
+
+      public String getUserName() {
+        return userName;
+      }
+
+      public void setUserName(String userName) {
+        this.userName = userName;
+      }
+
+      public String getUserAvatar() {
+        return userAvatar;
+      }
+
+      public void setUserAvatar(String userAvatar) {
+        this.userAvatar = userAvatar;
+      }
+    }
+
     private Long id;
     private VenueInfo venueInfo;
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -403,11 +424,11 @@ public class VenueRelayDto {
     private String creatorUsername;
     /**
      * joinedByCurrentUser 字段表示当前用户是否已加入该接龙（true 已加入，false 未加入）。
-     * participantUserNames 字段表示已加入该接龙的用户名列表。
+     * participants 字段表示已加入该接龙的参与人信息数组（用户名、头像）。
      * createTime 字段表示接龙创建的日期和时间（格式为 yyyy-MM-dd HH:mm:ss）。
      */
     private Boolean joinedByCurrentUser;
-    private List<String> participantUserNames;
+    private List<ParticipantInfo> participants;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
@@ -547,12 +568,12 @@ public class VenueRelayDto {
       this.joinedByCurrentUser = joinedByCurrentUser;
     }
 
-    public List<String> getParticipantUserNames() {
-      return participantUserNames;
+    public List<ParticipantInfo> getParticipants() {
+      return participants;
     }
 
-    public void setParticipantUserNames(List<String> participantUserNames) {
-      this.participantUserNames = participantUserNames;
+    public void setParticipants(List<ParticipantInfo> participants) {
+      this.participants = participants;
     }
 
     public LocalDateTime getCreateTime() {
