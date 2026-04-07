@@ -46,6 +46,8 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     validateCreateRequest(request);
 
     User currentUser = getCurrentUser();
+    String creatorUserName = resolveCreatorUserName(request, currentUser);
+    String creatorUserAvatar = resolveCreatorUserAvatar(request, currentUser);
     Venue venue = venueRepository.findById(request.getVenueId())
         .orElseThrow(() -> new IllegalArgumentException("场馆不存在"));
 
@@ -63,15 +65,15 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     relay.setVenueImage(safeTrim(request.getVenueImage()));
     relay.setSkillLevel(safeTrim(request.getSkillLevel()));
     relay.setCreatorUserId(currentUser.getId());
-    relay.setCreatorUsername(currentUser.getUsername());
+    relay.setCreatorUsername(creatorUserName);
     relay.setJoinedPeople(1);
 
     VenueRelay savedRelay = venueRelayRepository.save(relay);
     VenueRelayParticipant creatorParticipant = new VenueRelayParticipant();
     creatorParticipant.setRelay(savedRelay);
     creatorParticipant.setUserId(currentUser.getId());
-    creatorParticipant.setUserName(currentUser.getUsername());
-    creatorParticipant.setUserAvatar(safeTrim(currentUser.getWxAvatarUrl()));
+    creatorParticipant.setUserName(creatorUserName);
+    creatorParticipant.setUserAvatar(creatorUserAvatar);
     creatorParticipant.setContactInfo(safeTrim(request.getContactInfo()));
     creatorParticipant.setStatus("1");
     creatorParticipant.setJoinTime(LocalDateTime.now());
@@ -249,12 +251,11 @@ public class VenueRelayServiceImpl implements VenueRelayService {
   @Transactional
   public void joinRelay(VenueRelayDto.JoinRequest request) {
     refreshExpiredRelays();
-
-    if (request == null || request.getRelayId() == null) {
-      throw new IllegalArgumentException("接龙ID不能为空");
-    }
+    validateJoinRequest(request);
 
     User currentUser = getCurrentUser();
+    String joinUserName = resolveJoinUserName(request, currentUser);
+    String joinUserAvatar = resolveJoinUserAvatar(request, currentUser);
     VenueRelay relay = venueRelayRepository.findById(request.getRelayId())
         .orElseThrow(() -> new IllegalArgumentException("接龙不存在"));
     if (!"1".equals(relay.getStatus())) {
@@ -275,8 +276,8 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     VenueRelayParticipant participant = optionalParticipant.orElseGet(VenueRelayParticipant::new);
     participant.setRelay(relay);
     participant.setUserId(currentUser.getId());
-    participant.setUserName(currentUser.getUsername());
-    participant.setUserAvatar(safeTrim(currentUser.getWxAvatarUrl()));
+    participant.setUserName(joinUserName);
+    participant.setUserAvatar(joinUserAvatar);
     participant.setContactInfo(safeTrim(request.getContactInfo()));
     participant.setStatus("1");
     participant.setJoinTime(LocalDateTime.now());
@@ -403,6 +404,12 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     if (request.getSkillLevel().trim().length() > 50) {
       throw new IllegalArgumentException("水平等级长度不能超过50");
     }
+    if (request.getCreatorUserName() != null && request.getCreatorUserName().trim().length() > 100) {
+      throw new IllegalArgumentException("创建人名称长度不能超过100");
+    }
+    if (request.getCreatorUserAvatar() != null && request.getCreatorUserAvatar().trim().length() > 500) {
+      throw new IllegalArgumentException("创建人头像长度不能超过500");
+    }
   }
 
   private void validateEditRequest(VenueRelayDto.EditRequest request) {
@@ -412,8 +419,52 @@ public class VenueRelayServiceImpl implements VenueRelayService {
     validateCreateRequest(request);
   }
 
+  private void validateJoinRequest(VenueRelayDto.JoinRequest request) {
+    if (request == null || request.getRelayId() == null) {
+      throw new IllegalArgumentException("接龙ID不能为空");
+    }
+    if (request.getJoinUserName() != null && request.getJoinUserName().trim().length() > 100) {
+      throw new IllegalArgumentException("参与人名称长度不能超过100");
+    }
+    if (request.getJoinUserAvatar() != null && request.getJoinUserAvatar().trim().length() > 500) {
+      throw new IllegalArgumentException("参与人头像长度不能超过500");
+    }
+  }
+
   private String safeTrim(String value) {
     return value == null ? null : value.trim();
+  }
+
+  private String resolveCreatorUserName(VenueRelayDto.CreateRequest request, User currentUser) {
+    String requestName = safeTrim(request.getCreatorUserName());
+    if (requestName != null && !requestName.isEmpty()) {
+      return requestName;
+    }
+    return safeTrim(currentUser.getUsername());
+  }
+
+  private String resolveCreatorUserAvatar(VenueRelayDto.CreateRequest request, User currentUser) {
+    String requestAvatar = safeTrim(request.getCreatorUserAvatar());
+    if (requestAvatar != null && !requestAvatar.isEmpty()) {
+      return requestAvatar;
+    }
+    return safeTrim(currentUser.getWxAvatarUrl());
+  }
+
+  private String resolveJoinUserName(VenueRelayDto.JoinRequest request, User currentUser) {
+    String requestName = safeTrim(request.getJoinUserName());
+    if (requestName != null && !requestName.isEmpty()) {
+      return requestName;
+    }
+    return safeTrim(currentUser.getUsername());
+  }
+
+  private String resolveJoinUserAvatar(VenueRelayDto.JoinRequest request, User currentUser) {
+    String requestAvatar = safeTrim(request.getJoinUserAvatar());
+    if (requestAvatar != null && !requestAvatar.isEmpty()) {
+      return requestAvatar;
+    }
+    return safeTrim(currentUser.getWxAvatarUrl());
   }
 
   private User getCurrentUser() {

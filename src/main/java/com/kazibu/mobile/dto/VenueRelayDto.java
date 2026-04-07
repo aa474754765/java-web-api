@@ -24,6 +24,8 @@ public class VenueRelayDto {
     private String remark;
     private String venueImage; // 场馆图片
     private String skillLevel; // 水平等级
+    private String creatorUserName; // 前端传入的创建人展示名
+    private String creatorUserAvatar; // 前端传入的创建人头像
 
     public Long getVenueId() {
       return venueId;
@@ -112,6 +114,22 @@ public class VenueRelayDto {
     public void setSkillLevel(String skillLevel) {
       this.skillLevel = skillLevel;
     }
+
+    public String getCreatorUserName() {
+      return creatorUserName;
+    }
+
+    public void setCreatorUserName(String creatorUserName) {
+      this.creatorUserName = creatorUserName;
+    }
+
+    public String getCreatorUserAvatar() {
+      return creatorUserAvatar;
+    }
+
+    public void setCreatorUserAvatar(String creatorUserAvatar) {
+      this.creatorUserAvatar = creatorUserAvatar;
+    }
   }
 
   /** 编辑接龙：字段同创建请求，另需 relayId */
@@ -130,6 +148,8 @@ public class VenueRelayDto {
   public static class JoinRequest {
     private Long relayId;
     private String contactInfo;
+    private String joinUserName; // 前端传入的参与人展示名
+    private String joinUserAvatar; // 前端传入的参与人头像
 
     public Long getRelayId() {
       return relayId;
@@ -145,6 +165,22 @@ public class VenueRelayDto {
 
     public void setContactInfo(String contactInfo) {
       this.contactInfo = contactInfo;
+    }
+
+    public String getJoinUserName() {
+      return joinUserName;
+    }
+
+    public void setJoinUserName(String joinUserName) {
+      this.joinUserName = joinUserName;
+    }
+
+    public String getJoinUserAvatar() {
+      return joinUserAvatar;
+    }
+
+    public void setJoinUserAvatar(String joinUserAvatar) {
+      this.joinUserAvatar = joinUserAvatar;
     }
   }
 
